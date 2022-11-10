@@ -35,6 +35,7 @@ public class BasketPanel extends AppPanel {
 		vSplit.setBottomComponent(tablePane);
 		vSplit.setDividerSize(0);
 		vSplit.setEnabled(false);
+		vSplit.setBounds(0, 0, 700, 250);
 		actionPanel.setMinimumSize(new Dimension(700, 50));
 		
 		creditLabel = new JLabel();
@@ -51,15 +52,14 @@ public class BasketPanel extends AppPanel {
 		actionPanel.add(creditLabel);
 		add(vSplit);
 		
-		updateComponents();
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				int width = e.getComponent().getWidth();
-				int height = e.getComponent().getWidth();
+				int height = e.getComponent().getHeight();
 				vSplit.setBounds(0, 0, width, height);
 				tablePane.setBounds(0, 50, width, height - 50);
-				updateComponents();
+				updateComponents(width);
 			}
 		});
 	}
@@ -78,18 +78,17 @@ public class BasketPanel extends AppPanel {
 			for (int r = 0; r < model.getRowCount(); ++r)
 				credit += (int) model.getValueAt(r, c);
 			
-			updateComponents();
+			updateComponents(getWidth());
 		});
 		
 		return pane;
 	}
 
-	private void updateComponents() {
-		int paneWidth = getWidth();
+	private void updateComponents(int panelWidth) {
 		int width = 100;
 		
 		creditLabel.setText("학점: " + credit);
-		creditLabel.setBounds(paneWidth - width, 0, width, 50);
+		creditLabel.setBounds(panelWidth - width, 0, width, 50);
 	}
 
 }
