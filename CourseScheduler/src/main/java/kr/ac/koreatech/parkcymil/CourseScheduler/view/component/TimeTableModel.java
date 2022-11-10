@@ -5,23 +5,20 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 
 public class TimeTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = -3765469254570687920L;
-	private List<Course> items = new ArrayList<Course>();
+	private List<Course> items;
 	
 	public TimeTableModel() {
 		items = new ArrayList<Course>();
-		//items.addAll(AppData.get().getCourseList());
 	}
 	
 	public TimeTableModel(List<Course> items) {
 		this.items = items;
-		//items.addAll(AppData.get().getCourseList());
 	}
 
 	public int getRowCount() {

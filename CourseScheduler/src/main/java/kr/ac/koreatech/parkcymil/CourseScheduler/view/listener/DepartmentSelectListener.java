@@ -5,18 +5,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.RowFilter;
-import javax.swing.table.TableRowSorter;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Department;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.component.BrowserPanel;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.component.TimeTableModel;
 
 public class DepartmentSelectListener implements ActionListener {
 
-	private TableRowSorter<TimeTableModel> sorter;
+	private BrowserPanel panel;
 	
-	public DepartmentSelectListener(TableRowSorter<TimeTableModel> sorter) {
-		this.sorter = sorter;
+	public DepartmentSelectListener(BrowserPanel panel) {
+		this.panel = panel;
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class DepartmentSelectListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JComboBox<String> source = (JComboBox<String>) e.getSource();
 		String department = (String) source.getSelectedItem();
-		RowFilter<TimeTableModel, Integer> filter = (RowFilter<TimeTableModel, Integer>) sorter.getRowFilter();
+		RowFilter<TimeTableModel, Integer> filter = null;
 		
 		if (Department.getByText(department) != null) {
 			filter = new RowFilter<TimeTableModel, Integer>() {
@@ -39,7 +39,7 @@ public class DepartmentSelectListener implements ActionListener {
 			};
 		}
 		
-		sorter.setRowFilter(filter);
+		panel.setDepartmentFilter(filter);
 	}
 
 }

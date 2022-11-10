@@ -3,7 +3,6 @@ package kr.ac.koreatech.parkcymil.CourseScheduler.view.component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;

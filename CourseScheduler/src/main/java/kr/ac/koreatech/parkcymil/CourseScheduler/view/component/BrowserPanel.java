@@ -7,7 +7,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -17,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.table.TableRowSorter;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
@@ -31,6 +31,8 @@ public class BrowserPanel extends AppPanel {
 	
 	private JTable table;
 	private TableRowSorter<TimeTableModel> sorter;
+	private RowFilter<TimeTableModel, Integer> searchFilter = null;
+	private RowFilter<TimeTableModel, Integer> departmentFilter = null;
 	private JTextField searchFld = createSearchField();
 	private JButton pickBtn = new JButton("과목 담기");
 	private Insets btnMargin = new Insets(0, 0, 0, 0);
@@ -59,25 +61,6 @@ public class BrowserPanel extends AppPanel {
 		});
 	}
 	
-	private JComboBox<String> createDepartmentComboBox() {
-		JComboBox<String> box = new JComboBox<String>();
-		box.setBounds(360, 10, 160, 30);
-		box.addActionListener(new DepartmentSelectListener(sorter));
-		box.addItem("전체");
-		
-		for (Department m : Department.values())
-			box.addItem(m.getText());
-		
-		return box;
-	}
-	
-	private JLabel createSearchLabel() {
-		JLabel label = new JLabel("검색");
-		label.setBounds(0, 10, 50, 30);
-		label.setHorizontalAlignment(JLabel.RIGHT);
-		return label;
-	}
-	
 	public JTextField createSearchField() {
 		JTextField field = new JTextField(10);
 		KeyAdapter adapter = SearchEventHandler.getKeyAdapter(this);
@@ -88,6 +71,40 @@ public class BrowserPanel extends AppPanel {
 	
 	public JTextField getSearchField() {
 		return searchFld;
+	}
+	
+	public void setSearchFilter(RowFilter<TimeTableModel, Integer> filter) {
+		searchFilter = filter;
+		updateFilter();
+	}
+	
+	public void setDepartmentFilter(RowFilter<TimeTableModel, Integer> filter) {
+		departmentFilter = filter;
+		updateFilter();
+	}
+	
+	private void updateFilter() {
+		sorter.setRowFilter(new RowFilter<TimeTableModel, Integer>() {
+			@Override
+			public boolean include(Entry<? extends TimeTableModel, ? extends Integer> entry) {
+				boolean c1 = (searchFilter != null) ? searchFilter.include(entry) : true;
+				boolean c2 = (departmentFilter != null) ? departmentFilter.include(entry) : true;
+				
+				return c1 && c2;
+			}
+		});
+	}
+	
+	private void updateComponents() {
+		pickBtn.setBounds(getWidth() - 130, 10, 100, 30);
+		pickBtn.setMargin(btnMargin);
+	}
+	
+	private JLabel createSearchLabel() {
+		JLabel label = new JLabel("검색");
+		label.setBounds(0, 10, 50, 30);
+		label.setHorizontalAlignment(JLabel.RIGHT);
+		return label;
 	}
 	
 	private JButton createSearchButton() {
@@ -108,10 +125,22 @@ public class BrowserPanel extends AppPanel {
 		return label;
 	}
 	
+	private JComboBox<String> createDepartmentComboBox() {
+		JComboBox<String> box = new JComboBox<String>();
+		box.setBounds(360, 10, 160, 30);
+		box.addActionListener(new DepartmentSelectListener(this));
+		box.addItem("전체");
+		
+		for (Department m : Department.values())
+			box.addItem(m.getText());
+		
+		return box;
+	}
+	
 	private JScrollPane createTable() {
 		List<Course> courseList = AppData.get().getCourseList();
 		TimeTableModel ttModel = new TimeTableModel(courseList);
-		sorter = new TableRowSorter<TimeTableModel>();
+		sorter = new TableRowSorter<TimeTableModel>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
 		
@@ -119,15 +148,6 @@ public class BrowserPanel extends AppPanel {
 		table.setRowSorter(sorter);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		return pane;
-	}
-	
-	private void updateComponents() {
-		pickBtn.setBounds(getWidth() - 130, 10, 100, 30);
-		pickBtn.setMargin(btnMargin);
-	}
-
-	public TableRowSorter<TimeTableModel> getTableSorter() {
-		return sorter;
 	}
 	
 }

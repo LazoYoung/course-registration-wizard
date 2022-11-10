@@ -35,7 +35,7 @@ public class SearchEventHandler {
 
 	private static void doAction(BrowserPanel panel) {
 		String query = panel.getSearchField().getText().toLowerCase();
-		RowFilter<TimeTableModel, Integer> filter= (RowFilter<TimeTableModel, Integer>) panel.getTableSorter().getRowFilter();
+		RowFilter<TimeTableModel, Integer> filter = null;
 		
 		if (!query.isBlank()) {
 			filter = new RowFilter<TimeTableModel, Integer>() {
@@ -58,7 +58,7 @@ public class SearchEventHandler {
 			};
 		}
 		
-		panel.getTableSorter().setRowFilter(filter);
+		panel.setSearchFilter(filter);
 	}
 
 }
