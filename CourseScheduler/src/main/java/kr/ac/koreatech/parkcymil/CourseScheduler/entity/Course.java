@@ -1,8 +1,5 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Course {
 	
 	private String code;

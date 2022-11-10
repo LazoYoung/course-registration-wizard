@@ -22,6 +22,7 @@ import javax.swing.table.TableRowSorter;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Department;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.CoursePickListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.DepartmentSelectListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.SearchEventHandler;
 
@@ -34,7 +35,7 @@ public class BrowserPanel extends AppPanel {
 	private RowFilter<TimeTableModel, Integer> searchFilter = null;
 	private RowFilter<TimeTableModel, Integer> departmentFilter = null;
 	private JTextField searchFld = createSearchField();
-	private JButton pickBtn = new JButton("과목 담기");
+	private JButton pickBtn;
 	private Insets btnMargin = new Insets(0, 0, 0, 0);
 
 	protected BrowserPanel() {
@@ -47,6 +48,7 @@ public class BrowserPanel extends AppPanel {
 		JButton searchBtn = createSearchButton();
 		JLabel deptTxt = createDepartmentLabel();
 		JComboBox<String> deptBox = createDepartmentComboBox();
+		pickBtn = createPickButton();
 		
 		updateComponents();
 		addAll(searchTxt, searchFld, searchBtn, deptTxt, deptBox, pickBtn, tablePane);
@@ -60,7 +62,7 @@ public class BrowserPanel extends AppPanel {
 			}
 		});
 	}
-	
+
 	public JTextField createSearchField() {
 		JTextField field = new JTextField(10);
 		KeyAdapter adapter = SearchEventHandler.getKeyAdapter(this);
@@ -97,7 +99,6 @@ public class BrowserPanel extends AppPanel {
 	
 	private void updateComponents() {
 		pickBtn.setBounds(getWidth() - 130, 10, 100, 30);
-		pickBtn.setMargin(btnMargin);
 	}
 	
 	private JLabel createSearchLabel() {
@@ -135,6 +136,14 @@ public class BrowserPanel extends AppPanel {
 			box.addItem(m.getText());
 		
 		return box;
+	}
+	
+	private JButton createPickButton() {
+		 JButton button = new JButton("과목 담기");
+		 MouseAdapter adapter = new CoursePickListener();
+		 button.setMargin(btnMargin);
+		 button.addMouseListener(adapter);
+		 return button;
 	}
 	
 	private JScrollPane createTable() {
