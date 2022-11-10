@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.MouseAdapter;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -16,21 +14,23 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.table.TableRowSorter;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Department;
-import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.CoursePickListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.DepartmentSelectListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.SearchEventHandler;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHandler;
 
 public class BrowserPanel extends AppPanel {
 	
 	private static final long serialVersionUID = -5838395870111051633L;
 	
 	private JTable table;
+	private TimeTableModel ttModel;
 	private TableRowSorter<TimeTableModel> sorter;
 	private RowFilter<TimeTableModel, Integer> searchFilter = null;
 	private RowFilter<TimeTableModel, Integer> departmentFilter = null;
@@ -38,7 +38,7 @@ public class BrowserPanel extends AppPanel {
 	private JButton pickBtn;
 	private Insets btnMargin = new Insets(0, 0, 0, 0);
 
-	protected BrowserPanel() {
+	protected BrowserPanel(BasketPanel basketPanel) {
 		setLayout(null);
 		setBackground(Color.LIGHT_GRAY);
 		setMinimumSize(new Dimension(700, 200));
@@ -48,7 +48,7 @@ public class BrowserPanel extends AppPanel {
 		JButton searchBtn = createSearchButton();
 		JLabel deptTxt = createDepartmentLabel();
 		JComboBox<String> deptBox = createDepartmentComboBox();
-		pickBtn = createPickButton();
+		pickBtn = createPickButton(basketPanel);
 		
 		updateComponents();
 		addAll(searchTxt, searchFld, searchBtn, deptTxt, deptBox, pickBtn, tablePane);
@@ -65,9 +65,9 @@ public class BrowserPanel extends AppPanel {
 
 	public JTextField createSearchField() {
 		JTextField field = new JTextField(10);
-		KeyAdapter adapter = SearchEventHandler.getKeyAdapter(this);
+		SearchEventHandler handler = new SearchEventHandler(this);
 		field.setBounds(60, 10, 200, 30);
-		field.addKeyListener(adapter);
+		field.addKeyListener(handler.getKeyAdapter());
 		return field;
 	}
 	
@@ -112,10 +112,10 @@ public class BrowserPanel extends AppPanel {
 		// Icon by Chanut
 		ImageIcon icon = getIcon("search.png", 20);
 		JButton button = new JButton(icon);
-		MouseAdapter adapter = SearchEventHandler.getMouseAdapter(this);
+		SearchEventHandler handler = new SearchEventHandler(this);
 		button.setBounds(260, 10, 30, 30);
 		button.setMargin(btnMargin);
-		button.addMouseListener(adapter);
+		button.addMouseListener(handler.getMouseAdapter());
 		return button;
 	}
 	
@@ -138,24 +138,29 @@ public class BrowserPanel extends AppPanel {
 		return box;
 	}
 	
-	private JButton createPickButton() {
-		 JButton button = new JButton("과목 담기");
-		 MouseAdapter adapter = new CoursePickListener();
-		 button.setMargin(btnMargin);
-		 button.addMouseListener(adapter);
-		 return button;
+	private JButton createPickButton(BasketPanel basketPanel) {
+		JButton button = new JButton("과목 담기");
+		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+			@Override
+			public void onTransfer(Course c) {
+				basketPanel.addCourse(c);
+			}
+		};
+		button.setMargin(btnMargin);
+		button.addMouseListener(handler.getButtonListener());
+		return button;
 	}
 	
 	private JScrollPane createTable() {
 		List<Course> courseList = AppData.get().getCourseList();
-		TimeTableModel ttModel = new TimeTableModel(courseList);
+		ttModel = new TimeTableModel(courseList);
 		sorter = new TableRowSorter<TimeTableModel>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
 		
 		table.setFillsViewportHeight(true);
 		table.setRowSorter(sorter);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		return pane;
 	}
 	

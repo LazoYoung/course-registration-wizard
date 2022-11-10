@@ -26,7 +26,7 @@ public class AppFrame extends JFrame {
 		InfoPanel infoPanel = new InfoPanel();
 		TimetablePanel timetablePanel = new TimetablePanel();
 		BasketPanel basketPanel = new BasketPanel();
-		BrowserPanel browserPanel = new BrowserPanel();
+		BrowserPanel browserPanel = new BrowserPanel(basketPanel);
 		ovSplit.setTopComponent(infoPanel);
 		ovSplit.setBottomComponent(hSplit);
 		ovSplit.setResizeWeight(0.0);

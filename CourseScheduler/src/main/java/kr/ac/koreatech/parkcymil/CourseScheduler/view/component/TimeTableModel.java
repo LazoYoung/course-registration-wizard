@@ -45,11 +45,20 @@ public class TimeTableModel extends AbstractTableModel {
 	}
 	
 	public void addItem(Course course) {
+		if (items.stream().anyMatch(c -> c.getUniqueID() == course.getUniqueID()))
+			return;
+		
 		items.add(course);
+		fireTableDataChanged();
+	}
+	
+	public Course getItem(int index) {
+		return items.get(index);
 	}
 	
 	public void removeItem(int index) {
 		items.remove(index);
+		fireTableDataChanged();
 	}
 
 }

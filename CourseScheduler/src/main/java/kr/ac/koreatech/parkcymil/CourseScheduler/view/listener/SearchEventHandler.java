@@ -13,27 +13,33 @@ import kr.ac.koreatech.parkcymil.CourseScheduler.view.component.TimeTableModel;
 
 public class SearchEventHandler {
 	
-	public static MouseAdapter getMouseAdapter(BrowserPanel panel) {
+	private BrowserPanel panel;
+	
+	public SearchEventHandler(BrowserPanel panel) {
+		this.panel = panel;
+	}
+	
+	public MouseAdapter getMouseAdapter() {
 		return new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1)
-					doAction(panel);
+					doAction();
 			}
 		};
 	}
 	
-	public static KeyAdapter getKeyAdapter(BrowserPanel panel) {
+	public KeyAdapter getKeyAdapter() {
 		return new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					doAction(panel);
+					doAction();
 			}
 		};
 	}
 
-	private static void doAction(BrowserPanel panel) {
+	private void doAction() {
 		String query = panel.getSearchField().getText().toLowerCase();
 		RowFilter<TimeTableModel, Integer> filter = null;
 		

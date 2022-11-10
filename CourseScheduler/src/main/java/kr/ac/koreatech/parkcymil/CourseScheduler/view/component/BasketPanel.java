@@ -12,13 +12,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 
 public class BasketPanel extends AppPanel {
 
 	private static final long serialVersionUID = -8329358148384536170L;
+	private TimeTableModel ttModel;
 	private JTable table;
 	private JLabel creditLabel;
 	private int credit = 0;
@@ -64,12 +67,17 @@ public class BasketPanel extends AppPanel {
 		});
 	}
 	
+	public void addCourse(Course c) {
+		ttModel.addItem(c);
+	}
+	
 	private JScrollPane createTable() {
-		TimeTableModel ttModel = new TimeTableModel();
+		ttModel = new TimeTableModel();
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
 		
 		table.setFillsViewportHeight(true);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		ttModel.addTableModelListener(e -> {
 			TableModel model = (TableModel) e.getSource();
 			int c = CourseData.CREDIT.getColumn();

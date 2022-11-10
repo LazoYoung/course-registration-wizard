@@ -2,6 +2,8 @@ package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
 public class Course {
 	
+	private static int newId = 0;
+	private int id;
 	private String code;
 	private String name;
 	private int section;
@@ -17,6 +19,7 @@ public class Course {
 	public Course(String code, String name, int section,
 			String professor, String program, int credit,
 			String note, int capacity, int design, String department) {
+		this.id = newId++;
 		this.code = code;
 		this.name = name;
 		this.section = section;
@@ -53,6 +56,15 @@ public class Course {
 			return note;
 		}
 		throw new IllegalArgumentException("Undefined type: " + data.toString());
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof Course) && (id == ((Course) obj).id);
+	}
+
+	public int getUniqueID() {
+		return id;
 	}
 
 	public String getCode() {
