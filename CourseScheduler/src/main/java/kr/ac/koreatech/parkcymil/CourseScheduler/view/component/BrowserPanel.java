@@ -91,7 +91,6 @@ public class BrowserPanel extends AppPanel {
 			public boolean include(Entry<? extends TimeTableModel, ? extends Integer> entry) {
 				boolean c1 = (searchFilter != null) ? searchFilter.include(entry) : true;
 				boolean c2 = (departmentFilter != null) ? departmentFilter.include(entry) : true;
-				
 				return c1 && c2;
 			}
 		});
@@ -157,7 +156,6 @@ public class BrowserPanel extends AppPanel {
 		sorter = new TableRowSorter<TimeTableModel>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
-		
 		table.setFillsViewportHeight(true);
 		table.setRowSorter(sorter);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
