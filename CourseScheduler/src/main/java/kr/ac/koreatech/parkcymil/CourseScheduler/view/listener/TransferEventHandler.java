@@ -21,7 +21,7 @@ public abstract class TransferEventHandler {
 	public MouseAdapter getButtonListener() {
 		return new MouseAdapter() {
 			@Override
-			public final void mouseClicked(MouseEvent e) {
+			public final void mousePressed(MouseEvent e) {
 				if (e.getButton() != MouseEvent.BUTTON1)
 					return;
 				
@@ -34,7 +34,7 @@ public abstract class TransferEventHandler {
 	public MouseAdapter getDoubleClickListener() {
 		return new MouseAdapter() {
 			@Override
-			public final void mouseClicked(MouseEvent e) {
+			public final void mousePressed(MouseEvent e) {
 				int btn = e.getButton();
 				int count = e.getClickCount();
 				

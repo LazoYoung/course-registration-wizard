@@ -43,7 +43,7 @@ public class BrowserPanel extends AppPanel {
 		setBackground(Color.LIGHT_GRAY);
 		setMinimumSize(new Dimension(700, 200));
 		
-		JScrollPane tablePane = createTable();
+		JScrollPane tablePane = createTable(basketPanel);
 		JLabel searchTxt = createSearchLabel();
 		JButton searchBtn = createSearchButton();
 		JLabel deptTxt = createDepartmentLabel();
@@ -61,14 +61,6 @@ public class BrowserPanel extends AppPanel {
 				updateComponents();
 			}
 		});
-	}
-
-	public JTextField createSearchField() {
-		JTextField field = new JTextField(10);
-		SearchEventHandler handler = new SearchEventHandler(this);
-		field.setBounds(60, 10, 200, 30);
-		field.addKeyListener(handler.getKeyAdapter());
-		return field;
 	}
 	
 	public JTextField getSearchField() {
@@ -89,15 +81,23 @@ public class BrowserPanel extends AppPanel {
 		sorter.setRowFilter(new RowFilter<TimeTableModel, Integer>() {
 			@Override
 			public boolean include(Entry<? extends TimeTableModel, ? extends Integer> entry) {
-				boolean c1 = (searchFilter != null) ? searchFilter.include(entry) : true;
-				boolean c2 = (departmentFilter != null) ? departmentFilter.include(entry) : true;
-				return c1 && c2;
+				boolean f1 = (searchFilter != null) ? searchFilter.include(entry) : true;
+				boolean f2 = (departmentFilter != null) ? departmentFilter.include(entry) : true;
+				return f1 && f2;
 			}
 		});
 	}
 	
 	private void updateComponents() {
 		pickBtn.setBounds(getWidth() - 130, 10, 100, 30);
+	}
+	
+	private JTextField createSearchField() {
+		JTextField field = new JTextField(10);
+		SearchEventHandler handler = new SearchEventHandler(this);
+		field.setBounds(60, 10, 200, 30);
+		field.addKeyListener(handler.getKeyAdapter());
+		return field;
 	}
 	
 	private JLabel createSearchLabel() {
@@ -150,15 +150,24 @@ public class BrowserPanel extends AppPanel {
 		return button;
 	}
 	
-	private JScrollPane createTable() {
+	private JScrollPane createTable(BasketPanel basketPanel) {
 		List<Course> courseList = AppData.get().getCourseList();
 		ttModel = new TimeTableModel(courseList);
 		sorter = new TableRowSorter<TimeTableModel>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
-		table.setFillsViewportHeight(true);
+		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+			@Override
+			public void onTransfer(Course c) {
+				basketPanel.addCourse(c);
+			}
+		};
+		
 		table.setRowSorter(sorter);
+		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.addMouseListener(handler.getDoubleClickListener());
 		return pane;
 	}
 	

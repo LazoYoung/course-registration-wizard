@@ -78,6 +78,7 @@ public class BasketPanel extends AppPanel {
 		
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getTableHeader().setReorderingAllowed(false);
 		ttModel.addTableModelListener(e -> {
 			TableModel model = (TableModel) e.getSource();
 			int c = CourseData.CREDIT.getColumn();
@@ -94,7 +95,6 @@ public class BasketPanel extends AppPanel {
 
 	private void updateComponents(int panelWidth) {
 		int width = 100;
-		
 		creditLabel.setText("학점: " + credit);
 		creditLabel.setBounds(panelWidth - width, 0, width, 50);
 	}

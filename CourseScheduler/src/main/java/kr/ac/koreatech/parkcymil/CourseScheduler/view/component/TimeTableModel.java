@@ -14,7 +14,7 @@ public class TimeTableModel extends AbstractTableModel {
 	private List<Course> items;
 	
 	public TimeTableModel() {
-		items = new ArrayList<Course>();
+		this(new ArrayList<Course>());
 	}
 	
 	public TimeTableModel(List<Course> items) {
