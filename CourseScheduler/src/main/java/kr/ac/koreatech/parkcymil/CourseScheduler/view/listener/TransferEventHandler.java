@@ -25,8 +25,10 @@ public abstract class TransferEventHandler {
 				if (e.getButton() != MouseEvent.BUTTON1)
 					return;
 				
-				int row = table.getSelectedRow();
-				onTransfer(model.getItem(row));
+				int index = table.getSelectedRow();
+				
+				if (index > -1)
+					onTransfer(model.getItem(index));
 			}
 		};
 	}

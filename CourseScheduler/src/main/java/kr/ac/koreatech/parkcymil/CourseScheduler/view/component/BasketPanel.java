@@ -5,9 +5,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -17,6 +20,7 @@ import javax.swing.table.TableModel;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHandler;
 
 public class BasketPanel extends AppPanel {
 
@@ -42,13 +46,10 @@ public class BasketPanel extends AppPanel {
 		actionPanel.setMinimumSize(new Dimension(700, 50));
 		
 		creditLabel = new JLabel();
-		JButton dropBtn = new JButton("과목 빼기");
-		JButton clearBtn = new JButton("초기화");
-		JButton enhanceBtn = new JButton("과목 추천");
+		JButton dropBtn = createDropButton();
+		JButton clearBtn = createClearButton();
+		JButton enhanceBtn = createEnhanceButton();
 		creditLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-		dropBtn.setBounds(30, 10, 100, 30);
-		clearBtn.setBounds(150, 10, 80, 30);
-		enhanceBtn.setBounds(250, 10, 100, 30);
 		actionPanel.add(dropBtn);
 		actionPanel.add(clearBtn);
 		actionPanel.add(enhanceBtn);
@@ -75,10 +76,17 @@ public class BasketPanel extends AppPanel {
 		ttModel = new TimeTableModel();
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
+		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+			@Override
+			public void onTransfer(Course c) {
+				ttModel.removeItem(c);
+			}
+		};
 		
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
+		table.addMouseListener(handler.getDoubleClickListener());
 		ttModel.addTableModelListener(e -> {
 			TableModel model = (TableModel) e.getSource();
 			int c = CourseData.CREDIT.getColumn();
@@ -91,6 +99,43 @@ public class BasketPanel extends AppPanel {
 		});
 		
 		return pane;
+	}
+	
+	private JButton createDropButton() {
+		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+			@Override
+			public void onTransfer(Course c) {
+				ttModel.removeItem(c);
+			}
+		};
+		JButton button = new JButton("과목 빼기");
+		button.setBounds(30, 10, 100, 30);
+		button.addMouseListener(handler.getButtonListener());
+		return button;
+	}
+	
+	private JButton createClearButton() {
+		JButton button = new JButton("초기화");
+		button.setBounds(150, 10, 80, 30);
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ttModel.clearItems();
+			}
+		});
+		return button;
+	}
+	
+	private JButton createEnhanceButton() {
+		JButton button = new JButton("과목 추천");
+		button.setBounds(250, 10, 100, 30);
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(null, "This feature is not ready.");
+			}
+		});
+		return button;
 	}
 
 	private void updateComponents(int panelWidth) {

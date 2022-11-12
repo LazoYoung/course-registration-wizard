@@ -52,13 +52,21 @@ public class TimeTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 	
-	public Course getItem(int index) {
-		return items.get(index);
+	public void removeItem(Course course) {
+		if (items.remove(course))
+			fireTableDataChanged();
 	}
 	
-	public void removeItem(int index) {
-		items.remove(index);
+	public void clearItems() {
+		if (items.isEmpty())
+			return;
+		
+		items.clear();
 		fireTableDataChanged();
+	}
+	
+	public Course getItem(int index) {
+		return items.get(index);
 	}
 
 }
