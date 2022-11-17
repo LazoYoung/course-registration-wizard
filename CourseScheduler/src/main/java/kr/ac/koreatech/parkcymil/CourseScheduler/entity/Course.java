@@ -14,11 +14,11 @@ public class Course {
 	private int design;
 	private int capacity;
 	private String note;
-	// TODO Add attribute: Map<Day, Hour>
+	private int[] time;
 	
 	public Course(String code, String name, int section,
 			String professor, String program, int credit,
-			String note, int capacity, int design, String department) {
+			String note, int capacity, int design, String department, int[] time) {
 		this.id = newId++;
 		this.code = code;
 		this.name = name;
@@ -30,6 +30,7 @@ public class Course {
 		this.design = design;
 		this.capacity = capacity;
 		this.note = note;
+		this.time = time;
 	}
 	
 	public Object get(CourseData data) {
@@ -105,6 +106,10 @@ public class Course {
 
 	public String getNote() {
 		return note;
+	}
+	
+	public int[] getTime() {
+		return time;
 	}
 	
 }

@@ -119,7 +119,7 @@ public class BasketPanel extends AppPanel {
 		button.setBounds(150, 10, 80, 30);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				ttModel.clearItems();
 			}
 		});
@@ -131,7 +131,7 @@ public class BasketPanel extends AppPanel {
 		button.setBounds(250, 10, 100, 30);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				JOptionPane.showMessageDialog(null, "This feature is not ready.");
 			}
 		});
