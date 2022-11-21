@@ -59,6 +59,7 @@ public class BrowserPanel extends AppPanel {
 				int width = e.getComponent().getWidth();
 				int height = e.getComponent().getHeight();
 				tablePane.setBounds(0, 50, width, height - 50);
+				tablePane.updateUI();
 				updateComponents();
 			}
 		});

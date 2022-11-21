@@ -65,6 +65,7 @@ public class BasketPanel extends AppPanel {
 				int height = e.getComponent().getHeight();
 				vSplit.setBounds(0, 0, width, height);
 				tablePane.setBounds(0, 50, width, height - 50);
+				tablePane.updateUI();
 				updateComponents(width);
 			}
 		});
