@@ -61,8 +61,8 @@ public class TimetablePanel extends AppPanel {
 		
 		int offsetX = 5;
 		int offsetY = 5;
-		int width = getWidth() - 2 * offsetX;
-		int height = Math.min(getHeight(), (int) size.getHeight()) - 2 * offsetY;
+		int width = (int) size.getWidth() - 2 * offsetX;
+		int height = (int) size.getHeight() - 2 * offsetY;
 		int headerHeight = 40;
 		int headerY = offsetY + headerHeight;
 		int cellHeight = 30;
