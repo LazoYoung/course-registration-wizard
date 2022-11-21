@@ -12,7 +12,7 @@ import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 
 public class AppFrame extends JFrame {
 
-	public static final Dimension d = new Dimension(1400, 800);
+	public static final Dimension d = new Dimension(1200, 800);
 	
 	private static final long serialVersionUID = 6874643613523999600L;
 
@@ -29,17 +29,20 @@ public class AppFrame extends JFrame {
 		BrowserPanel browserPanel = new BrowserPanel(basketPanel);
 		ovSplit.setTopComponent(infoPanel);
 		ovSplit.setBottomComponent(hSplit);
-		ovSplit.setResizeWeight(0.0);
+		ovSplit.setResizeWeight(0);
+		ovSplit.resetToPreferredSizes();
 		ovSplit.setDividerSize(0);
 		ovSplit.setEnabled(false);
 		hSplit.setLeftComponent(ivSplit);
 		hSplit.setRightComponent(timetablePanel);
 		hSplit.setResizeWeight(1.0);
+		hSplit.resetToPreferredSizes();
 		hSplit.setDividerSize(0);
 		hSplit.setEnabled(false);
 		ivSplit.setTopComponent(browserPanel);
 		ivSplit.setBottomComponent(basketPanel);
 		ivSplit.setResizeWeight(1.0);
+		ivSplit.resetToPreferredSizes();
 		ivSplit.setDividerSize(0);
 		ivSplit.setEnabled(false);
 		pane.add(ovSplit);
