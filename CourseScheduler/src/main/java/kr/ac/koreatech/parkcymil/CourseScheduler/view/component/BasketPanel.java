@@ -25,6 +25,7 @@ import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHand
 public class BasketPanel extends AppPanel {
 
 	private static final long serialVersionUID = -8329358148384536170L;
+	private Dimension size = new Dimension(700, 250);
 	private TimeTableModel ttModel;
 	private JTable table;
 	private JLabel creditLabel;
@@ -32,7 +33,8 @@ public class BasketPanel extends AppPanel {
 	
 	public BasketPanel() {
 		setLayout(null);
-		setMinimumSize(new Dimension(700, 250));
+		setMinimumSize(size);
+		setPreferredSize(size);
 		setBackground(Color.LIGHT_GRAY);
 		
 		JScrollPane tablePane = createTable();

@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 public class InfoPanel extends AppPanel {
 	
 	private static final long serialVersionUID = 1805488919917305748L;
+	private Dimension size = new Dimension(1000, 100);
 	private JLabel updateText;
 
 	protected InfoPanel() {
@@ -30,7 +31,8 @@ public class InfoPanel extends AppPanel {
 		updateText = new JLabel();
 		
 		setLayout(null);
-		setMinimumSize(new Dimension(1000, 100));
+		setMinimumSize(size);
+		setPreferredSize(size);
 		setBackground(Color.GRAY);
 		addAll(imgLabel, titleText, authorText, snoText, emailText, updateText);
 		

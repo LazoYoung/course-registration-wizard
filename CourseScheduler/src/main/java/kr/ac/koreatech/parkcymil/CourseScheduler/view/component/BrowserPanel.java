@@ -28,7 +28,7 @@ import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHand
 public class BrowserPanel extends AppPanel {
 	
 	private static final long serialVersionUID = -5838395870111051633L;
-	
+	private Dimension size = new Dimension(700, 200);
 	private JTable table;
 	private TimeTableModel ttModel;
 	private TableRowSorter<TimeTableModel> sorter;
@@ -41,7 +41,8 @@ public class BrowserPanel extends AppPanel {
 	protected BrowserPanel(BasketPanel basketPanel) {
 		setLayout(null);
 		setBackground(Color.LIGHT_GRAY);
-		setMinimumSize(new Dimension(700, 200));
+		setMinimumSize(size);
+		setPreferredSize(size);
 		
 		JScrollPane tablePane = createTable(basketPanel);
 		JLabel searchTxt = createSearchLabel();
