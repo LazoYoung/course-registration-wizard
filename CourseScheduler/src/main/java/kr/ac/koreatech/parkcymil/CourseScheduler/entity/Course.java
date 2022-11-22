@@ -33,7 +33,7 @@ public class Course {
 		this.time = time;
 	}
 	
-	public Object get(CourseData data) {
+	public Object getData(CourseData data) {
 		switch (data) {
 		case CODE:
 			return code;

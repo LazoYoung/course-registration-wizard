@@ -11,7 +11,8 @@ public enum CourseData {
 	NOTE(6, "비고", String.class),
 	CAPACITY(7, "정원", Integer.class),
 	DESIGN(8, "설계", Integer.class),
-	DEPARTMENT(9, "개설학부", String.class);
+	DEPARTMENT(9, "개설학부", String.class),
+	TIME(10, "시간", String.class);
 	
 	private String text;
 	private Class<?> type;
@@ -53,6 +54,7 @@ public enum CourseData {
 	 * @param column Column to match
 	 * @return CourseData instance
 	 */
+	@Deprecated(forRemoval = true)
 	public static CourseData getByColumn(int column) {
 		for (CourseData data : values()) {
 			if (data.column == column)

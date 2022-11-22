@@ -12,13 +12,25 @@ public class TimeTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = -3765469254570687920L;
 	private List<Course> items;
+	private CourseData[] headerItems = {
+			CourseData.CODE,
+			CourseData.NAME,
+			CourseData.SECTION,
+			CourseData.PROFESSOR,
+			CourseData.PROGRAM,
+			CourseData.CREDIT,
+			CourseData.NOTE,
+			CourseData.CAPACITY,
+			CourseData.DESIGN,
+			CourseData.DEPARTMENT
+	};
 	
 	public TimeTableModel() {
 		this(new ArrayList<Course>());
 	}
 	
 	public TimeTableModel(List<Course> items) {
-		this.items = items;
+		this.items = items; 
 	}
 
 	public int getRowCount() {
@@ -26,22 +38,21 @@ public class TimeTableModel extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return CourseData.values().length;
+		return headerItems.length;
 	}
 	
 	@Override
 	public String getColumnName(int col) {
-		return CourseData.getByColumn(col).getText();
+		return headerItems[col].getText();
 	}
 
 	public Object getValueAt(int row, int col) {
-		Course c = items.get(row);
-		CourseData data = CourseData.getByColumn(col);
-		return c.get(data);
+		Course course = items.get(row);
+		return course.getData(headerItems[col]);
 	}
 	
 	public Class<?> getColumnClass(int col) {
-		return CourseData.getByColumn(col).getType();
+		return headerItems[col].getType();
 	}
 	
 	public void addItem(Course course) {
