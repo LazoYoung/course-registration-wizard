@@ -2,6 +2,8 @@ package kr.ac.koreatech.parkcymil.CourseScheduler.view.component;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -9,11 +11,11 @@ import javax.swing.JSplitPane;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.DataParser;
 
 public class AppFrame extends JFrame {
 
 	public static final Dimension d = new Dimension(1200, 800);
-	
 	private static final long serialVersionUID = 6874643613523999600L;
 
 	private AppFrame() {
@@ -56,33 +58,21 @@ public class AppFrame extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		supplyTestData();
-		
+		loadData();
 		AppFrame frame = new AppFrame();
 		frame.setVisible(true);
 	}
-
-	private static void supplyTestData() {
-		List<Course> list = AppData.get().getCourseList();
-		Course[] array = {
-				new Course("CSE110", "창의적공학설계(AD)", 1, "문성태", "컴부전체", 3, null, 50, 3,
-						"컴퓨터공학부", new int[] {4, 5, 6, 7, 200, 201, 202, 203}),
-				new Course("CSE110", "창의적공학설계(AD)", 2, "문성태", "컴부전체", 3, null, 50, 3,
-						"컴퓨터공학부", new int[] {210, 211, 212, 213, 300, 301, 302, 303}),
-				new Course("CSE110", "창의적공학설계(AD)", 3, "김덕수", "컴부전체", 3, null, 50, 3,
-						"컴퓨터공학부", new int[] {0, 1, 2, 3, 204, 205, 206, 207}),
-				new Course("CSE110", "창의적공학설계(AD)", 4, "윤한경", "컴부전체", 3, null, 50, 3,
-						"컴퓨터공학부", new int[] {210, 211, 212, 213, 300, 301, 302, 303}),
-				new Course("MEF666", "창의적공학설계(AD)", 1, "라문우", "기공전체", 2, null, 50, 2,
-						"기계공학부", new int[] {10, 11, 314, 315, 316, 317}),
-				new Course("MEF666", "창의적공학설계(AD)", 2, "유형민", "기공전체", 2, null, 50, 2,
-						"기계공학부", new int[] {108, 109, 110, 111, 308, 309}),
-				new Course("MEF666", "창의적공학설계(AD)", 3, "채석병", "기공전체", 2, null, 50, 2,
-						"기계공학부", new int[] {10, 11, 114, 115, 116, 117})
-		};
-		
-		for (Course c : array)
-			list.add(c);
+	
+	private static void loadData() {
+		try {
+			URL url = AppFrame.class.getClassLoader().getResource("data.csv");
+			File file = new File(url.getFile());
+			AppData data = AppData.get();
+			data.courseList = DataParser.extractCourse(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Failed to load data.");
+		}
 	}
 	
 }

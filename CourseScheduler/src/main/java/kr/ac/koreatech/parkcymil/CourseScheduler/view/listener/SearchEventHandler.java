@@ -44,10 +44,12 @@ public class SearchEventHandler {
 		RowFilter<TimeTableModel, Integer> filter = null;
 		
 		if (!query.isBlank()) {
-			filter = new RowFilter<TimeTableModel, Integer>() {
+			filter = new RowFilter<>() {
 				private CourseData[] dataArray = {
-						CourseData.CODE, CourseData.NAME,
-						CourseData.PROFESSOR, CourseData.NOTE
+						CourseData.CODE,
+						CourseData.NAME,
+						CourseData.PROFESSOR,
+						CourseData.NOTE
 				};
 				
 				@Override

@@ -27,7 +27,7 @@ public class DepartmentSelectListener implements ActionListener {
 		RowFilter<TimeTableModel, Integer> filter = null;
 		
 		if (Department.getByText(department) != null) {
-			filter = new RowFilter<TimeTableModel, Integer>() {
+			filter = new RowFilter<>() {
 				private int col = CourseData.DEPARTMENT.getColumn();
 				
 				@Override

@@ -128,7 +128,7 @@ public class BrowserPanel extends AppPanel {
 	}
 	
 	private JComboBox<String> createDepartmentComboBox() {
-		JComboBox<String> box = new JComboBox<String>();
+		JComboBox<String> box = new JComboBox<>();
 		box.setBounds(360, 10, 160, 30);
 		box.addActionListener(new DepartmentSelectListener(this));
 		box.addItem("전체");
@@ -153,9 +153,9 @@ public class BrowserPanel extends AppPanel {
 	}
 	
 	private JScrollPane createTable(BasketPanel basketPanel) {
-		List<Course> courseList = AppData.get().getCourseList();
+		List<Course> courseList = AppData.get().courseList;
 		ttModel = new TimeTableModel(courseList);
-		sorter = new TableRowSorter<TimeTableModel>(ttModel);
+		sorter = new TableRowSorter<>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
 		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {

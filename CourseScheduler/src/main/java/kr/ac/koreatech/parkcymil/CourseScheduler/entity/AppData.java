@@ -5,19 +5,16 @@ import java.util.List;
 
 public class AppData {
 	
-	private static AppData instance = new AppData();
-	private List<Course> courseList;
+	private static AppData instance = null;
+	public List<Course> courseList = new ArrayList<>();
 	
-	private AppData() {
-		courseList = new ArrayList<Course>();
-	}
+	private AppData() {}
 	
 	public static AppData get() {
+		if (instance == null)
+			instance = new AppData();
+		
 		return instance;
-	}
-	
-	public List<Course> getCourseList() {
-		return courseList;
 	}
 	
 }

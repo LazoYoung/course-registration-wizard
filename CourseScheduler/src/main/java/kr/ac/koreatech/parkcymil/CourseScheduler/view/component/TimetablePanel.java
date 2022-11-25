@@ -27,9 +27,9 @@ public class TimetablePanel extends AppPanel {
 	private List<JLabel> hourFormats;
 	
 	public TimetablePanel() {
-		dayLabels = new ArrayList<JLabel>();
-		hourLabels = new ArrayList<JLabel>();
-		hourFormats = new ArrayList<JLabel>();
+		dayLabels = new ArrayList<>();
+		hourLabels = new ArrayList<>();
+		hourFormats = new ArrayList<>();
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.WHITE);

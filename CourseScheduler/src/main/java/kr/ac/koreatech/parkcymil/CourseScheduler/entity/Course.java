@@ -1,9 +1,14 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Course {
 	
 	private static int newId = 0;
+	private Map<CourseData, Object> map;
 	private int id;
+	/*
 	private String code;
 	private String name;
 	private int section;
@@ -15,11 +20,18 @@ public class Course {
 	private int capacity;
 	private String note;
 	private int[] time;
+	*/
 	
+	public Course(Map<CourseData, Object> map) {
+		this.id = newId++;
+		this.map = map;
+	}
+	
+	@Deprecated(forRemoval = true)
 	public Course(String code, String name, int section,
 			String professor, String program, int credit,
 			String note, int capacity, int design, String department, int[] time) {
-		this.id = newId++;
+		/*
 		this.code = code;
 		this.name = name;
 		this.section = section;
@@ -31,9 +43,13 @@ public class Course {
 		this.capacity = capacity;
 		this.note = note;
 		this.time = time;
+		*/
+		this.id = newId++;
+		this.map = new HashMap<>();
 	}
 	
 	public Object getData(CourseData data) {
+		/*
 		switch (data) {
 		case CODE:
 			return code;
@@ -55,8 +71,14 @@ public class Course {
 			return capacity;
 		case NOTE:
 			return note;
+		case TIME:
+			return time;
+		default:
+			throw new IllegalArgumentException("Undefined type: " + data.toString());
 		}
-		throw new IllegalArgumentException("Undefined type: " + data.toString());
+		*/
+		
+		return map.get(data);
 	}
 	
 	@Override
@@ -64,10 +86,11 @@ public class Course {
 		return (obj instanceof Course) && (id == ((Course) obj).id);
 	}
 
-	public int getUniqueID() {
+	public Object getUniqueID() {
 		return id;
 	}
 
+	/*
 	public String getCode() {
 		return code;
 	}
@@ -111,5 +134,6 @@ public class Course {
 	public int[] getTime() {
 		return time;
 	}
+	*/
 	
 }
