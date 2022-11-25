@@ -87,6 +87,7 @@ public class BasketPanel extends AppPanel {
 			}
 		};
 		
+		ttModel.resizeColumnWidth(table.getColumnModel());
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);

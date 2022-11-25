@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumnModel;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
@@ -78,6 +79,13 @@ public class TimeTableModel extends AbstractTableModel {
 	
 	public Course getItem(int index) {
 		return items.get(index);
+	}
+	
+	public void resizeColumnWidth(TableColumnModel model) {
+		int[] size = { 100, 250, 50, 200, 200, 50, 100, 50, 50, 200 };
+		
+		for (int i = 0; i < size.length; ++i)
+			model.getColumn(i).setPreferredWidth(size[i]);
 	}
 
 }

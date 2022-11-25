@@ -165,6 +165,7 @@ public class BrowserPanel extends AppPanel {
 			}
 		};
 		
+		ttModel.resizeColumnWidth(table.getColumnModel());
 		table.setRowSorter(sorter);
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
