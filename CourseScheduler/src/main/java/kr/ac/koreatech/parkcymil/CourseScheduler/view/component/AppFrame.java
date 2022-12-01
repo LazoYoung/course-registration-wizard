@@ -4,13 +4,11 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
-import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.DataParser;
 
 public class AppFrame extends JFrame {
@@ -26,9 +24,9 @@ public class AppFrame extends JFrame {
 		JSplitPane hSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		JSplitPane ivSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		InfoPanel infoPanel = new InfoPanel();
-		TimetablePanel timetablePanel = new TimetablePanel();
 		BasketPanel basketPanel = new BasketPanel();
 		BrowserPanel browserPanel = new BrowserPanel(basketPanel);
+		TimetablePanel timetablePanel = new TimetablePanel(basketPanel);
 		ovSplit.setTopComponent(infoPanel);
 		ovSplit.setBottomComponent(hSplit);
 		ovSplit.setResizeWeight(0);

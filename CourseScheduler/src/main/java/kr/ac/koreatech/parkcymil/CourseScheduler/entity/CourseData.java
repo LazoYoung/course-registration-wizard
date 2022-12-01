@@ -1,7 +1,5 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
-import java.util.List;
-
 public enum CourseData {
 
 	CODE(0, "과목코드", String.class),
@@ -14,7 +12,7 @@ public enum CourseData {
 	CAPACITY(7, "정원", Integer.class),
 	DESIGN(8, "설계", Integer.class),
 	DEPARTMENT(9, "개설학부", String.class),
-	TIME(10, "시간", List.class);
+	HOURS(10, "시간", Hours.class);
 	
 	private String text;
 	private Class<?> type;

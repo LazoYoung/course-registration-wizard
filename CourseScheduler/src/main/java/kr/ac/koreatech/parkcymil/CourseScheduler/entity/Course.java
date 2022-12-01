@@ -86,7 +86,7 @@ public class Course {
 		return (obj instanceof Course) && (id == ((Course) obj).id);
 	}
 
-	public Object getUniqueID() {
+	public int getUniqueID() {
 		return id;
 	}
 
