@@ -19,9 +19,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
-import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHandler;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TableActionHandler;
 
 public class BasketPanel extends AppPanel {
 
@@ -34,13 +35,14 @@ public class BasketPanel extends AppPanel {
 	private JLabel creditLabel;
 	private int credit = 0;
 	
-	public BasketPanel() {
+	public BasketPanel(Basket basket, TimeTableModel ttModel) {
 		setLayout(null);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.LIGHT_GRAY);
 		
-		tablePane = createTable();
+		this.ttModel = ttModel;
+		tablePane = createTable(basket);
 		vSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		JPanel actionPanel = new JPanel(null);
 		vSplit.setTopComponent(actionPanel);
@@ -51,7 +53,7 @@ public class BasketPanel extends AppPanel {
 		actionPanel.setMinimumSize(new Dimension(700, 50));
 		
 		creditLabel = new JLabel();
-		JButton dropBtn = createDropButton();
+		JButton dropBtn = createDropButton(basket);
 		JButton clearBtn = createClearButton();
 		JButton enhanceBtn = createEnhanceButton();
 		creditLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
@@ -71,10 +73,6 @@ public class BasketPanel extends AppPanel {
 	
 	public TimeTableModel getTableModel() {
 		return ttModel;
-	}
-	
-	public void addCourse(Course c) {
-		ttModel.addItem(c);
 	}
 	
 	private void enhanceBasket() {
@@ -109,14 +107,14 @@ public class BasketPanel extends AppPanel {
 		updateComponents(getWidth());
 	}
 	
-	private JScrollPane createTable() {
-		ttModel = new TimeTableModel();
+	private JScrollPane createTable(Basket basket) {
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onTransfer(Course c) {
+			public void onItemTransfer(Course c) {
 				ttModel.removeItem(c);
+				basket.drop(c);
 			}
 		};
 		
@@ -126,14 +124,16 @@ public class BasketPanel extends AppPanel {
 		table.getTableHeader().setReorderingAllowed(false);
 		table.addMouseListener(handler.getDoubleClickListener());
 		ttModel.addTableModelListener(this::onTableChanged);
+		basket.addPickListener(ttModel::addItem);
 		return pane;
 	}
 	
-	private JButton createDropButton() {
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+	private JButton createDropButton(Basket basket) {
+		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onTransfer(Course c) {
+			public void onItemTransfer(Course c) {
 				ttModel.removeItem(c);
+				basket.drop(c);
 			}
 		};
 		JButton button = new JButton("과목 빼기");

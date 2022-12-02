@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -19,16 +20,19 @@ import javax.swing.RowFilter;
 import javax.swing.table.TableRowSorter;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Department;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.DepartmentSelectListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.SearchEventHandler;
-import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHandler;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TableActionHandler;
 
 public class BrowserPanel extends AppPanel {
 	
 	private static final long serialVersionUID = -5838395870111051633L;
 	private Dimension size = new Dimension(700, 200);
+	private Basket basket;
 	private JTable table;
 	private TimeTableModel ttModel;
 	private TableRowSorter<TimeTableModel> sorter;
@@ -38,18 +42,19 @@ public class BrowserPanel extends AppPanel {
 	private JButton pickBtn;
 	private Insets btnMargin = new Insets(0, 0, 0, 0);
 
-	protected BrowserPanel(BasketPanel basketPanel) {
+	protected BrowserPanel(Basket basket) {
 		setLayout(null);
 		setBackground(Color.LIGHT_GRAY);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		
-		JScrollPane tablePane = createTable(basketPanel);
+		this.basket = basket;
+		JScrollPane tablePane = createTable();
 		JLabel searchTxt = createSearchLabel();
 		JButton searchBtn = createSearchButton();
 		JLabel deptTxt = createDepartmentLabel();
 		JComboBox<String> deptBox = createDepartmentComboBox();
-		pickBtn = createPickButton(basketPanel);
+		pickBtn = createPickButton();
 		
 		updateComponents();
 		addAll(searchTxt, searchFld, searchBtn, deptTxt, deptBox, pickBtn, tablePane);
@@ -139,31 +144,21 @@ public class BrowserPanel extends AppPanel {
 		return box;
 	}
 	
-	private JButton createPickButton(BasketPanel basketPanel) {
+	private JButton createPickButton() {
 		JButton button = new JButton("과목 담기");
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
-			@Override
-			public void onTransfer(Course c) {
-				basketPanel.addCourse(c);
-			}
-		};
+		TableActionHandler handler = getTableActionHandler();
 		button.setMargin(btnMargin);
 		button.addMouseListener(handler.getButtonListener());
 		return button;
 	}
 	
-	private JScrollPane createTable(BasketPanel basketPanel) {
+	private JScrollPane createTable() {
 		List<Course> courseList = AppData.get().courseList;
 		ttModel = new TimeTableModel(courseList);
 		sorter = new TableRowSorter<>(ttModel);
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
-			@Override
-			public void onTransfer(Course c) {
-				basketPanel.addCourse(c);
-			}
-		};
+		TableActionHandler handler = getTableActionHandler();
 		
 		ttModel.resizeColumnWidth(table.getColumnModel());
 		table.setRowSorter(sorter);
@@ -172,6 +167,30 @@ public class BrowserPanel extends AppPanel {
 		table.getTableHeader().setReorderingAllowed(false);
 		table.addMouseListener(handler.getDoubleClickListener());
 		return pane;
+	}
+	
+	private TableActionHandler getTableActionHandler() {
+		TableActionHandler handler = new TableActionHandler(table, ttModel) {
+			@Override
+			public void onItemTransfer(Course c) {
+				Course obstacle = basket.getCourseInConflict(c);
+				
+				if (obstacle != null) {
+					String obsName = new StringBuilder()
+							.append(obstacle.getData(CourseData.NAME))
+							.append(" ")
+							.append(obstacle.getData(CourseData.SECTION))
+							.append(" 분반")
+							.toString();
+					String title = "Time conflicts";
+					String message = "That course overlaps with " + obsName;
+					JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+				} else {
+					basket.pick(c);
+				}
+			}
+		};
+		return handler;
 	}
 	
 }

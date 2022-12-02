@@ -12,7 +12,7 @@ public enum CourseData {
 	CAPACITY(7, "정원", Integer.class),
 	DESIGN(8, "설계", Integer.class),
 	DEPARTMENT(9, "개설학부", String.class),
-	HOURS(10, "시간", Hours.class);
+	HOURS(10, "시간", Hour[].class);
 	
 	private String text;
 	private Class<?> type;

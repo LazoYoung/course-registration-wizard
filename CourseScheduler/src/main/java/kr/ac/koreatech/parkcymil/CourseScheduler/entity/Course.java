@@ -1,6 +1,7 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Course {
@@ -88,6 +89,11 @@ public class Course {
 
 	public int getUniqueID() {
 		return id;
+	}
+	
+	public List<HourBlock> getHourBlocks() {
+		Hour[] hours = (Hour[]) getData(CourseData.HOURS);
+		return HourBlock.getBlocks(hours);
 	}
 
 	/*
