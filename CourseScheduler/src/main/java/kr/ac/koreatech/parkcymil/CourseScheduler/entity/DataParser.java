@@ -25,7 +25,7 @@ public class DataParser {
 			CourseData.DEPARTMENT,
 			CourseData.PROFESSOR,
 			CourseData.CAPACITY,
-			CourseData.TIME
+			CourseData.HOURS
 	};
 	
 	private DataParser(String line) {
@@ -73,27 +73,39 @@ public class DataParser {
 			CourseData data = column[c];
 			String token = tokens[c];
 			
-			if (token.startsWith("\""))
+			if (token.startsWith("\"")) {
 				token = token.substring(1, token.length() - 1);
+			}
 			
-			if (data == CourseData.TIME) {
-				int len = token.length();
-				
-				if (len > 2) {
-					token = token.substring(1, len - 1);
-					map.put(data, parseIntArray(token));
-				} else {
-					map.put(data, new int[0]);
-				}
-			} else if (data.getType() == Integer.class) {
+			if (data == CourseData.HOURS) {
+				map.put(data, parseHours(token));
+			}
+			else if (data.getType() == Integer.class) {
 				int value = (token.isBlank()) ? 0 : Integer.parseInt(token);
 				map.put(data, value);
-			} else {
+			}
+			else {
 				map.put(data, token);
 			}
 		}
 		
 		return new Course(map);
+	}
+
+	private Hour[] parseHours(String token) {
+		int len = token.length();
+		
+		if (len <= 2) return new Hour[0];
+		
+		token = token.substring(1, len - 1);
+		int[] arr = parseIntArray(token);
+		Hour[] hours = new Hour[arr.length];
+		
+		for (int i = 0; i < arr.length; ++i) {
+			hours[i] = new Hour(arr[i]);
+		}
+		
+		return hours;
 	}
 
 	private String[] parseLine() {

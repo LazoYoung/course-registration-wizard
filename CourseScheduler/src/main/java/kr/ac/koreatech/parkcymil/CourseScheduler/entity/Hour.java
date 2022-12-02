@@ -1,5 +1,7 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
+import java.util.Objects;
+
 public class Hour {
 
 	private int data;
@@ -8,23 +10,12 @@ public class Hour {
 		this.data = data;
 	}
 	
-	public String getDay() {
-		int day = data / 100;
-		
-		switch (day) {
-		case 0:
-			return "월요일";
-		case 1:
-			return "화요일";
-		case 2:
-			return "수요일";
-		case 3:
-			return "목요일";
-		case 4:
-			return "금요일";
-		default:
-			throw new IllegalStateException("Invalid day: "  + day);
-		}
+	public Day getDay() {
+		return Day.get(data / 100);
+	}
+	
+	public int getIndex() {
+		return data % 100;
 	}
 	
 	public String getLabel() {
@@ -36,10 +27,9 @@ public class Hour {
 	}
 	
 	private String getHourInfo(boolean isFormat) {
-		int hour = data % 100;
 		String label, format;
 		
-		switch (hour) {
+		switch (getIndex()) {
 		case 0:
 			label = "01A";
 			format = "09:00";
@@ -113,10 +103,25 @@ public class Hour {
 			format = "17:30";
 			break;
 		default:
-			throw new IllegalStateException("Invalid hour: " + hour);
+			throw new IllegalStateException("Invalid hour data: " + data);
 		}
 		
 		return isFormat ? format : label;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if ((obj == null) || (getClass() != obj.getClass()))
+			return false;
+		Hour other = (Hour) obj;
+		return (data == other.data);
 	}
 	
 }

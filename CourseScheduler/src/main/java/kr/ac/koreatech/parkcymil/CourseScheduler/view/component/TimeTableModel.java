@@ -56,6 +56,10 @@ public class TimeTableModel extends AbstractTableModel {
 		return headerItems[col].getType();
 	}
 	
+	public Course getItem(int index) {
+		return items.get(index);
+	}
+	
 	public void addItem(Course course) {
 		if (items.stream().anyMatch(c -> c.getUniqueID() == course.getUniqueID()))
 			return;
@@ -75,10 +79,6 @@ public class TimeTableModel extends AbstractTableModel {
 		
 		items.clear();
 		fireTableDataChanged();
-	}
-	
-	public Course getItem(int index) {
-		return items.get(index);
 	}
 	
 	public void resizeColumnWidth(TableColumnModel model) {

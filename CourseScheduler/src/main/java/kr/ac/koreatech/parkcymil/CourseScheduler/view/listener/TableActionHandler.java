@@ -9,12 +9,12 @@ import javax.swing.RowSorter;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.component.TimeTableModel;
 
-public abstract class TransferEventHandler {
+public abstract class TableActionHandler {
 	
 	private JTable table;
 	private TimeTableModel model;
 	
-	public TransferEventHandler(JTable table, TimeTableModel model) {
+	public TableActionHandler(JTable table, TimeTableModel model) {
 		this.table = table;
 		this.model = model;
 	}
@@ -42,7 +42,7 @@ public abstract class TransferEventHandler {
 		};
 	}
 	
-	public abstract void onTransfer(Course c);
+	public abstract void onItemTransfer(Course c);
 
 	@SuppressWarnings("unchecked")
 	private void execute() {
@@ -55,7 +55,7 @@ public abstract class TransferEventHandler {
 			if (rs != null)
 				index = rs.convertRowIndexToModel(row);
 			
-			onTransfer(model.getItem(index));
+			onItemTransfer(model.getItem(index));
 		}
 	}
 	

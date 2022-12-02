@@ -16,29 +16,35 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
-import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TransferEventHandler;
+import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.TableActionHandler;
 
 public class BasketPanel extends AppPanel {
 
 	private static final long serialVersionUID = -8329358148384536170L;
 	private Dimension size = new Dimension(700, 250);
-	private TimeTableModel ttModel;
+	private TimeTableModel ttModel = new TimeTableModel();
+	private Basket basket;
+	private JScrollPane tablePane;
+	private JSplitPane vSplit;
 	private JTable table;
 	private JLabel creditLabel;
 	private int credit = 0;
 	
-	public BasketPanel() {
+	public BasketPanel(Basket basket) {
 		setLayout(null);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.LIGHT_GRAY);
 		
-		JScrollPane tablePane = createTable();
-		JSplitPane vSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		this.basket = basket;
+		tablePane = createTable();
+		vSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		JPanel actionPanel = new JPanel(null);
 		vSplit.setTopComponent(actionPanel);
 		vSplit.setBottomComponent(tablePane);
@@ -61,28 +67,54 @@ public class BasketPanel extends AppPanel {
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				int width = e.getComponent().getWidth();
-				int height = e.getComponent().getHeight();
-				vSplit.setBounds(0, 0, width, height);
-				vSplit.updateUI();
-				tablePane.setBounds(0, 50, width, height - 50);
-				tablePane.updateUI();
-				updateComponents(width);
+				onResizeComponent(e);
 			}
 		});
 	}
 	
-	public void addCourse(Course c) {
-		ttModel.addItem(c);
+	public TimeTableModel getTableModel() {
+		return ttModel;
+	}
+	
+	private void enhanceBasket() {
+		// TODO Implement enhance button
+		JOptionPane.showMessageDialog(null, "This feature is not ready.");
+	}
+	
+	private void updateComponents(int panelWidth) {
+		int width = 100;
+		creditLabel.setText("학점: " + credit);
+		creditLabel.setBounds(panelWidth - width, 0, width, 50);
+	}
+	
+	private void onResizeComponent(ComponentEvent e) {
+		int width = e.getComponent().getWidth();
+		int height = e.getComponent().getHeight();
+		vSplit.setBounds(0, 0, width, height);
+		vSplit.updateUI();
+		tablePane.setBounds(0, 50, width, height - 50);
+		tablePane.updateUI();
+		updateComponents(width);
+	}
+	
+	private void onTableChanged(TableModelEvent e) {
+		TableModel model = (TableModel) e.getSource();
+		int c = CourseData.CREDIT.getColumn();
+		credit = 0;
+		
+		for (int r = 0; r < model.getRowCount(); ++r)
+			credit += (int) model.getValueAt(r, c);
+		
+		updateComponents(getWidth());
 	}
 	
 	private JScrollPane createTable() {
-		ttModel = new TimeTableModel();
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onTransfer(Course c) {
+			public void onItemTransfer(Course c) {
+				basket.drop(c);
 				ttModel.removeItem(c);
 			}
 		};
@@ -92,24 +124,16 @@ public class BasketPanel extends AppPanel {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.addMouseListener(handler.getDoubleClickListener());
-		ttModel.addTableModelListener(e -> {
-			TableModel model = (TableModel) e.getSource();
-			int c = CourseData.CREDIT.getColumn();
-			credit = 0;
-			
-			for (int r = 0; r < model.getRowCount(); ++r)
-				credit += (int) model.getValueAt(r, c);
-			
-			updateComponents(getWidth());
-		});
-		
+		ttModel.addTableModelListener(this::onTableChanged);
+		basket.addPickListener(ttModel::addItem);
 		return pane;
 	}
 	
 	private JButton createDropButton() {
-		TransferEventHandler handler = new TransferEventHandler(table, ttModel) {
+		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onTransfer(Course c) {
+			public void onItemTransfer(Course c) {
+				basket.drop(c);
 				ttModel.removeItem(c);
 			}
 		};
@@ -125,6 +149,9 @@ public class BasketPanel extends AppPanel {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				for (int i = 0; i < ttModel.getRowCount(); ++i) {
+					basket.drop(ttModel.getItem(i));
+				}
 				ttModel.clearItems();
 			}
 		});
@@ -137,16 +164,10 @@ public class BasketPanel extends AppPanel {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				JOptionPane.showMessageDialog(null, "This feature is not ready.");
+				enhanceBasket();
 			}
 		});
 		return button;
-	}
-
-	private void updateComponents(int panelWidth) {
-		int width = 100;
-		creditLabel.setText("학점: " + credit);
-		creditLabel.setBounds(panelWidth - width, 0, width, 50);
 	}
 
 }
