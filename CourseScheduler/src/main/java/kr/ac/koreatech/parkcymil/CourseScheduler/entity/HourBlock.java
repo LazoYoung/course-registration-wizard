@@ -53,8 +53,11 @@ public class HourBlock {
 	}
 	
 	public boolean isInConflict(HourBlock other) {
-		if (this.equals(other))
+		if (this == other)
 			return true;
+		
+		if (getDay() != other.getDay())
+			return false;
 		
 		int thisHead = begin.getIndex();
 		int thisTail = thisHead + length;
