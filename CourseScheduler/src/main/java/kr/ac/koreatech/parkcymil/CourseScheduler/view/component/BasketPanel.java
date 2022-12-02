@@ -29,6 +29,7 @@ public class BasketPanel extends AppPanel {
 	private static final long serialVersionUID = -8329358148384536170L;
 	private Dimension size = new Dimension(700, 250);
 	private TimeTableModel ttModel = new TimeTableModel();
+	private Basket basket;
 	private JScrollPane tablePane;
 	private JSplitPane vSplit;
 	private JTable table;
@@ -41,7 +42,8 @@ public class BasketPanel extends AppPanel {
 		setPreferredSize(size);
 		setBackground(Color.LIGHT_GRAY);
 		
-		tablePane = createTable(basket);
+		this.basket = basket;
+		tablePane = createTable();
 		vSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		JPanel actionPanel = new JPanel(null);
 		vSplit.setTopComponent(actionPanel);
@@ -52,7 +54,7 @@ public class BasketPanel extends AppPanel {
 		actionPanel.setMinimumSize(new Dimension(700, 50));
 		
 		creditLabel = new JLabel();
-		JButton dropBtn = createDropButton(basket);
+		JButton dropBtn = createDropButton();
 		JButton clearBtn = createClearButton();
 		JButton enhanceBtn = createEnhanceButton();
 		creditLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
@@ -106,14 +108,14 @@ public class BasketPanel extends AppPanel {
 		updateComponents(getWidth());
 	}
 	
-	private JScrollPane createTable(Basket basket) {
+	private JScrollPane createTable() {
 		table = new JTable(ttModel);
 		JScrollPane pane = new JScrollPane(table);
 		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
 			public void onItemTransfer(Course c) {
-				ttModel.removeItem(c);
 				basket.drop(c);
+				ttModel.removeItem(c);
 			}
 		};
 		
@@ -127,12 +129,12 @@ public class BasketPanel extends AppPanel {
 		return pane;
 	}
 	
-	private JButton createDropButton(Basket basket) {
+	private JButton createDropButton() {
 		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
 			public void onItemTransfer(Course c) {
-				ttModel.removeItem(c);
 				basket.drop(c);
+				ttModel.removeItem(c);
 			}
 		};
 		JButton button = new JButton("과목 빼기");
@@ -147,6 +149,9 @@ public class BasketPanel extends AppPanel {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				for (int i = 0; i < ttModel.getRowCount(); ++i) {
+					basket.drop(ttModel.getItem(i));
+				}
 				ttModel.clearItems();
 			}
 		});
