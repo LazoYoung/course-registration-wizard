@@ -22,14 +22,13 @@ public class AppFrame extends JFrame {
 		
 		Container pane = getContentPane();
 		Basket basket = new Basket();
-		TimeTableModel basketModel = new TimeTableModel();
 		JSplitPane ovSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		JSplitPane hSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		JSplitPane ivSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		InfoPanel infoPanel = new InfoPanel();
-		BasketPanel basketPanel = new BasketPanel(basket, basketModel);
+		BasketPanel basketPanel = new BasketPanel(basket);
 		BrowserPanel browserPanel = new BrowserPanel(basket);
-		TimetablePanel timetablePanel = new TimetablePanel(basket, basketModel);
+		TimetablePanel timetablePanel = new TimetablePanel(basket);
 		ovSplit.setTopComponent(infoPanel);
 		ovSplit.setBottomComponent(hSplit);
 		ovSplit.setResizeWeight(0);

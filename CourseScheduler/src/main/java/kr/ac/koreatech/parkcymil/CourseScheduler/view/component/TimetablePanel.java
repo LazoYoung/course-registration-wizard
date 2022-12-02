@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -17,7 +18,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.event.TableModelEvent;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
@@ -33,7 +33,6 @@ public class TimetablePanel extends AppPanel {
 	private List<JLabel> hourLabels;
 	private List<JLabel> hourFormats;
 	private Map<HourBlock, JLabel> courseLabels;
-	private TimeTableModel ttModel;
 	private Basket basket;
 	private Dimension size;
 	private int offsetX;
@@ -42,18 +41,18 @@ public class TimetablePanel extends AppPanel {
 	private int cellWidth;
 	private int headerHeight;
 	
-	public TimetablePanel(Basket basket, TimeTableModel ttModel) {
+	public TimetablePanel(Basket basket) {
 		dayLabels = new ArrayList<>();
 		hourLabels = new ArrayList<>();
 		hourFormats = new ArrayList<>();
 		courseLabels = new HashMap<>();
 		this.basket = basket;
-		this.ttModel = ttModel;
 		size = new Dimension(500, 660);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.WHITE);
-		ttModel.addTableModelListener(this::onBasketChanged);
+		basket.addPickListener(this::onItemPick);
+		basket.addDropListener(this::onItemDrop);
 		
 		for (int i = 0; i < Day.values().length; ++i) {
 			String text = Day.get(i).getLabel();
@@ -115,22 +114,6 @@ public class TimetablePanel extends AppPanel {
 		}
 		
 		drawBlocks(g);
-	}
-	
-	private void onBasketChanged(TableModelEvent e) {		
-		courseLabels.values().forEach(this::remove);
-		courseLabels.clear();
-		
-		for (int i = 0; i < ttModel.getRowCount(); ++i) {
-			Course course = ttModel.getItem(i);
-			
-			for (HourBlock block : course.getHourBlocks()) {
-				JLabel label = createCourseLabel(course);
-				courseLabels.put(block, label);
-				add(label);
-			}
-		}
-		repaint();
 	}
 	
 	private void drawBlocks(Graphics g) {
@@ -208,6 +191,30 @@ public class TimetablePanel extends AppPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void onItemPick(Course course) {
+		for (HourBlock block : course.getHourBlocks()) {
+			JLabel label = createCourseLabel(course);
+			courseLabels.put(block, label);
+			add(label);
+		}
+		repaint();
+	}
+	
+	private void onItemDrop(Course course) {
+		List<HourBlock> blocks = course.getHourBlocks();
+		Iterator<HourBlock> iter = courseLabels.keySet().iterator();
+		
+		while (iter.hasNext()) {
+			HourBlock next = iter.next();
+			
+			if (blocks.contains(next)) {
+				remove(courseLabels.get(next));
+				iter.remove();
+			}
+		}
+		repaint();
 	}
 	
 }

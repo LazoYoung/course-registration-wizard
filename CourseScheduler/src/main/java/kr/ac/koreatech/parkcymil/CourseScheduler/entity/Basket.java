@@ -80,7 +80,7 @@ public class Basket {
 	 * @param c Callback to run when the event occurs.
 	 */
 	public void addDropListener(Consumer<Course> c) {
-		pickListeners.add(c);
+		dropListeners.add(c);
 	}
 	
 }

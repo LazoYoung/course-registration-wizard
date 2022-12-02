@@ -28,20 +28,19 @@ public class BasketPanel extends AppPanel {
 
 	private static final long serialVersionUID = -8329358148384536170L;
 	private Dimension size = new Dimension(700, 250);
-	private TimeTableModel ttModel;
+	private TimeTableModel ttModel = new TimeTableModel();
 	private JScrollPane tablePane;
 	private JSplitPane vSplit;
 	private JTable table;
 	private JLabel creditLabel;
 	private int credit = 0;
 	
-	public BasketPanel(Basket basket, TimeTableModel ttModel) {
+	public BasketPanel(Basket basket) {
 		setLayout(null);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.LIGHT_GRAY);
 		
-		this.ttModel = ttModel;
 		tablePane = createTable(basket);
 		vSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		JPanel actionPanel = new JPanel(null);
