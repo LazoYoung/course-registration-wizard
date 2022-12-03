@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Browser;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Day;
@@ -33,6 +34,7 @@ public class TimetablePanel extends AppPanel {
 	private List<JLabel> hourLabels;
 	private List<JLabel> hourFormats;
 	private Map<HourBlock, JLabel> courseLabels;
+	private Browser browser;
 	private Basket basket;
 	private Dimension size;
 	private int offsetX;
@@ -41,16 +43,19 @@ public class TimetablePanel extends AppPanel {
 	private int cellWidth;
 	private int headerHeight;
 	
-	public TimetablePanel(Basket basket) {
+	public TimetablePanel(Browser browser, Basket basket) {
 		dayLabels = new ArrayList<>();
 		hourLabels = new ArrayList<>();
 		hourFormats = new ArrayList<>();
 		courseLabels = new HashMap<>();
+		this.browser = browser;
 		this.basket = basket;
 		size = new Dimension(500, 660);
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.WHITE);
+		browser.addPeekListener(this::onItemPeek);
+		browser.addEraseListener(this::onPeekErased);
 		basket.addPickListener(this::onItemPick);
 		basket.addDropListener(this::onItemDrop);
 		
@@ -113,10 +118,11 @@ public class TimetablePanel extends AppPanel {
 			drawVertical(g, vp.x, vp.y, height);
 		}
 		
-		drawBlocks(g);
+		drawPeekItems(g);
+		drawBasketItems(g);
 	}
-	
-	private void drawBlocks(Graphics g) {
+
+	private void drawBasketItems(Graphics g) {
 		int x0 = offsetX + cellWidth;
 		int y0 = offsetY + headerHeight;
 		Color pColor = g.getColor(); 
@@ -139,26 +145,38 @@ public class TimetablePanel extends AppPanel {
 		
 		g.setColor(pColor);
 	}
-
-	private JLabel createCourseLabel(Course course) {
-		JLabel label = new JLabel();
-		String name = (String) course.getData(CourseData.NAME);
-		int sect = (Integer) course.getData(CourseData.SECTION);
-		String prof = (String) course.getData(CourseData.PROFESSOR);
-		label.setText("<html>" + name + "<br>" + sect + " " + prof + "</html>");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-				
-		if (getBrightness(getColor(course)) < 0.4)
-			label.setForeground(Color.WHITE);
+	
+	private void drawPeekItems(Graphics g) {
+		Course peek = browser.getPeek();
 		
-		return label;
+		if (peek == null) return;
+				
+		for (Course course : browser.getOtherSections()) {
+			drawBlockOutlines(g, course, 1);
+		}
+		
+		drawBlockOutlines(g, peek, 5);
 	}
 	
-	private double getBrightness(Color color) {
-		int r = color.getRed();
-		int g = color.getGreen();
-		int b = color.getBlue();
-		return (r / 255.0) * 0.2126 + (g / 255.0) * 0.7152 + (b / 255.0) * 0.0722;
+	private void drawBlockOutlines(Graphics g, Course course, int pixel) {
+		Color pColor = g.getColor();
+		g.setColor(Color.RED);
+		
+		for (HourBlock block : course.getHourBlocks()) {
+			Day day = block.getDay();
+			int firstIndex = block.getFirstHour().getIndex();
+			int length = block.getLength();
+			int offset = 1;
+			int x0 = offsetX + cellWidth;
+			int y0 = offsetY + headerHeight;
+			int x = x0 + day.getIndex() * cellWidth + offset;
+			int y = y0 + firstIndex * cellHeight + offset;
+			int width = cellWidth - offset;
+			int height = length * cellHeight - offset;
+			drawHollowRect(g, new Rectangle(x, y, width, height), pixel);
+		}
+		
+		g.setColor(pColor);
 	}
 
 	private void drawLine(Graphics g, int x1, int y1, int x2, int y2) {
@@ -173,21 +191,41 @@ public class TimetablePanel extends AppPanel {
 		g.drawLine(x, y, x, y + length);
 	}
 	
-	private Color getColor(Course course) {
-		Random rand = new Random(course.getUniqueID());
-		float r = rand.nextFloat();
-		float g = rand.nextFloat();
-		float b = rand.nextFloat();
-		return new Color(r, g, b);
-	}
-	
-	private void drawRect(Graphics g, Rectangle r, int pixel) {
+	private void drawHollowRect(Graphics g, Rectangle r, int pixel) {
 		int offset = 2 * pixel;
 		Color origin = g.getColor();
 		g.fillRect(r.x, r.y, r.width, r.height);
 		g.setColor(getBackground());
 		g.fillRect(r.x + pixel, r.y + pixel, r.width - offset, r.height - offset);
 		g.setColor(origin);
+	}
+	
+	private JLabel createCourseLabel(Course course) {
+		JLabel label = new JLabel();
+		String name = (String) course.getData(CourseData.NAME);
+		int sect = (Integer) course.getData(CourseData.SECTION);
+		String prof = (String) course.getData(CourseData.PROFESSOR);
+		label.setText("<html>" + name + "<br>" + sect + " " + prof + "</html>");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Color color = getColor(course);
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		double brightness = (r / 255.0) * 0.2126 + (g / 255.0) * 0.7152 + (b / 255.0) * 0.0722;
+		
+		if (brightness < 0.4)
+			label.setForeground(Color.WHITE);
+		
+		return label;
+	}
+	
+	private Color getColor(Course course) {
+		Random rand = new Random(course.getUniqueID());
+		float r = rand.nextFloat();
+		float g = rand.nextFloat();
+		float b = rand.nextFloat();
+		return new Color(r, g, b);
 	}
 	
 	private void exportImage() {
@@ -225,6 +263,14 @@ public class TimetablePanel extends AppPanel {
 				iter.remove();
 			}
 		}
+		repaint();
+	}
+
+	private void onItemPeek() {
+		repaint();
+	}
+
+	private void onPeekErased() {
 		repaint();
 	}
 	
