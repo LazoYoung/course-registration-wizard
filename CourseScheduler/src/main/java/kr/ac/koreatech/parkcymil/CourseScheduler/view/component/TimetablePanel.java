@@ -119,7 +119,7 @@ public class TimetablePanel extends AppPanel {
 	private void drawBlocks(Graphics g) {
 		int x0 = offsetX + cellWidth;
 		int y0 = offsetY + headerHeight;
-		Color color = g.getColor(); 
+		Color pColor = g.getColor(); 
 		
 		for (HourBlock block : basket.getHourBlocks()) {
 			Course course = basket.getCourse(block);
@@ -137,7 +137,7 @@ public class TimetablePanel extends AppPanel {
 			label.setBounds(x, y, width, height);
 		}
 		
-		g.setColor(color);
+		g.setColor(pColor);
 	}
 
 	private JLabel createCourseLabel(Course course) {
@@ -147,7 +147,18 @@ public class TimetablePanel extends AppPanel {
 		String prof = (String) course.getData(CourseData.PROFESSOR);
 		label.setText("<html>" + name + "<br>" + sect + " " + prof + "</html>");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
+				
+		if (getBrightness(getColor(course)) < 0.4)
+			label.setForeground(Color.WHITE);
+		
 		return label;
+	}
+	
+	private double getBrightness(Color color) {
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		return (r / 255.0) * 0.2126 + (g / 255.0) * 0.7152 + (b / 255.0) * 0.0722;
 	}
 
 	private void drawLine(Graphics g, int x1, int y1, int x2, int y2) {
