@@ -113,7 +113,7 @@ public class BasketPanel extends AppPanel {
 		JScrollPane pane = new JScrollPane(table);
 		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onItemTransfer(Course c) {
+			public void onAction(Course c) {
 				basket.drop(c);
 				ttModel.removeItem(c);
 			}
@@ -123,7 +123,7 @@ public class BasketPanel extends AppPanel {
 		table.setFillsViewportHeight(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getTableHeader().setReorderingAllowed(false);
-		table.addMouseListener(handler.getDoubleClickListener());
+		table.addMouseListener(handler.getCellDoubleClickListener());
 		ttModel.addTableModelListener(this::onTableChanged);
 		basket.addPickListener(ttModel::addItem);
 		return pane;
@@ -132,7 +132,7 @@ public class BasketPanel extends AppPanel {
 	private JButton createDropButton() {
 		TableActionHandler handler = new TableActionHandler(table, ttModel) {
 			@Override
-			public void onItemTransfer(Course c) {
+			public void onAction(Course c) {
 				basket.drop(c);
 				ttModel.removeItem(c);
 			}

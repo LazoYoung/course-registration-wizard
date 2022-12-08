@@ -29,7 +29,20 @@ public abstract class TableActionHandler {
 		};
 	}
 
-	public MouseAdapter getDoubleClickListener() {
+	public MouseAdapter getCellClickListener() {
+		return new MouseAdapter() {
+			@Override
+			public final void mousePressed(MouseEvent e) {
+				int btn = e.getButton();
+				int count = e.getClickCount();
+				
+				if (btn == MouseEvent.BUTTON1 && count == 1)
+					execute();
+			}
+		};
+	}
+	
+	public MouseAdapter getCellDoubleClickListener() {
 		return new MouseAdapter() {
 			@Override
 			public final void mousePressed(MouseEvent e) {
@@ -42,7 +55,7 @@ public abstract class TableActionHandler {
 		};
 	}
 	
-	public abstract void onItemTransfer(Course c);
+	public abstract void onAction(Course c);
 
 	@SuppressWarnings("unchecked")
 	private void execute() {
@@ -55,7 +68,7 @@ public abstract class TableActionHandler {
 			if (rs != null)
 				index = rs.convertRowIndexToModel(row);
 			
-			onItemTransfer(model.getItem(index));
+			onAction(model.getItem(index));
 		}
 	}
 	
