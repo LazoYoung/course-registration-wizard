@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,10 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
@@ -34,6 +38,8 @@ public class TimetablePanel extends AppPanel {
 	private List<JLabel> hourLabels;
 	private List<JLabel> hourFormats;
 	private Map<HourBlock, JLabel> courseLabels;
+	private JLabel extraLabel;
+	private JButton exportBtn;
 	private Browser browser;
 	private Basket basket;
 	private Dimension size;
@@ -48,12 +54,16 @@ public class TimetablePanel extends AppPanel {
 		hourLabels = new ArrayList<>();
 		hourFormats = new ArrayList<>();
 		courseLabels = new HashMap<>();
+		extraLabel = new JLabel("이후");
+		exportBtn = new JButton("이미지 저장");
 		this.browser = browser;
 		this.basket = basket;
-		size = new Dimension(500, 660);
+		size = new Dimension(490, 660);
+		
 		setMinimumSize(size);
 		setPreferredSize(size);
 		setBackground(Color.WHITE);
+		setLayout(null);
 		browser.addPeekListener(this::onItemPeek);
 		browser.addEraseListener(this::onPeekErased);
 		basket.addPickListener(this::onItemPick);
@@ -77,6 +87,11 @@ public class TimetablePanel extends AppPanel {
 			hourFormats.add(format);
 			addAll(label, format);
 		}
+		
+		exportBtn.setBounds(5, 10, 100, 30);
+		exportBtn.addActionListener(this::onExport);
+		extraLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		addAll(exportBtn, extraLabel);
 	}
 
 	@Override
@@ -85,10 +100,9 @@ public class TimetablePanel extends AppPanel {
 		g.setColor(Color.BLACK);
 		
 		offsetX = 5;
-		offsetY = 5;
+		offsetY = exportBtn.isVisible() ? 50 : 5;
 		headerHeight = 40;
 		int width = (int) size.getWidth() - 2 * offsetX;
-		int height = (int) size.getHeight() - 2 * offsetY;
 		int headerY = offsetY + headerHeight;
 		cellHeight = 30;
 		cellWidth = width / 6;
@@ -96,10 +110,7 @@ public class TimetablePanel extends AppPanel {
 		
 		drawHorizon(g, offsetX, offsetY, width);
 		drawHorizon(g, offsetX, headerY, width);
-		drawHorizon(g, offsetX, offsetY + height, width);
 		drawLine(g, splitX, headerY, splitX, headerY + cellHeight * 18);
-		drawVertical(g, offsetX, offsetY, height);
-		drawVertical(g, offsetX + width, offsetY, height);
 		
 		Point hp = new Point(offsetX, headerY);
 		Point vp = new Point(offsetX, offsetY);
@@ -111,6 +122,13 @@ public class TimetablePanel extends AppPanel {
 			hp.y += cellHeight;
 			drawHorizon(g, hp.x, hp.y, width);
 		}
+		
+		extraLabel.setBounds(hp.x, hp.y, cellWidth, 2 * cellHeight);
+		hp.y += 2 * cellHeight;
+		int height = hp.y - offsetY;
+		drawHorizon(g, hp.x, hp.y, width);
+		drawVertical(g, offsetX, offsetY, height);
+		drawVertical(g, offsetX + width, offsetY, height);
 		
 		for (int i = 0; i < 5; ++i) {
 			vp.x += cellWidth;
@@ -228,18 +246,39 @@ public class TimetablePanel extends AppPanel {
 		return new Color(r, g, b);
 	}
 	
-	private void exportImage() {
-		// TODO Needs test
+	private void onExport(ActionEvent e) {
+		JFileChooser fc = new JFileChooser();
+		int result = fc.showSaveDialog(null);
+		
+		if (result != JFileChooser.APPROVE_OPTION) return;
+		
+		File file = fc.getSelectedFile();
+		String fileName = file.getName();
+		
+		if (!fileName.toLowerCase().endsWith(".png")) {
+			fileName = fileName.concat(".png");
+			file = new File(file.getParentFile(), fileName);
+		}
+		
 		int width = getWidth();
 		int height = getHeight();
-		BufferedImage buf = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		File file = new File("exported.png");
-		paintComponent(buf.createGraphics());
+		BufferedImage buf = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		exportBtn.setVisible(false);
+		paintAll(buf.createGraphics());
+		
 		try {
 			ImageIO.write(buf, "png", file);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
+		
+		exportBtn.setVisible(true);
+		repaint();
+		
+		String title = "저장 완료";
+		String msg = "시간표를 아래 경로에 저장했습니다.\n" + file.getAbsolutePath();
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void onItemPick(Course course) {
