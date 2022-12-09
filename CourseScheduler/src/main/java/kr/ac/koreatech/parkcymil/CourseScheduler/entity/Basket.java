@@ -1,7 +1,9 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,12 +59,26 @@ public class Basket {
 		return null;
 	}
 	
-	public Set<HourBlock> getHourBlocks() {
-		return map.keySet();
+	public List<HourBlock> getHourBlocks() {
+		var arr = map.keySet().toArray(new HourBlock[0]);
+		List<HourBlock> ret = new ArrayList<>();
+		Collections.addAll(ret, arr);
+		return ret;
 	}
 	
 	public Course getCourse(HourBlock block) {
 		return map.get(block);
+	}
+	
+	public Set<Course> getCourses() {
+		var arr = map.values().toArray(new Course[0]);
+		var set = new HashSet<Course>();
+		Collections.addAll(set, arr);
+		return set;
+	}
+	
+	public boolean contains(Course c) {
+		return map.containsValue(c);
 	}
 	
 	/**

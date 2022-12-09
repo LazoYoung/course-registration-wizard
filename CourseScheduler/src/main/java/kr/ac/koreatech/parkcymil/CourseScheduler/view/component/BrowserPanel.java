@@ -15,7 +15,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -27,7 +26,6 @@ import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Browser;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
-import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Department;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.DepartmentSelectListener;
 import kr.ac.koreatech.parkcymil.CourseScheduler.view.listener.SearchEventHandler;
@@ -188,9 +186,9 @@ public class BrowserPanel extends AppPanel {
 				
 				if (obstacle != null) {
 					String obsName = new StringBuilder()
-							.append(obstacle.getData(CourseData.NAME))
+							.append(obstacle.getName())
 							.append(" ")
-							.append(obstacle.getData(CourseData.SECTION))
+							.append(obstacle.getSection())
 							.append(" 분반")
 							.toString();
 					String title = "Time conflicts";

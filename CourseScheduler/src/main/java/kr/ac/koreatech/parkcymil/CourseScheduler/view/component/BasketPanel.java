@@ -7,6 +7,11 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,6 +24,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableModel;
 
+import kr.ac.koreatech.parkcymil.CourseScheduler.entity.AppData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
@@ -76,9 +82,96 @@ public class BasketPanel extends AppPanel {
 		return ttModel;
 	}
 	
+	/**
+	 * [Liberal Arts Selection Process]
+	 * 1. Compute total credits of liberal arts in basket
+	 * 2. Exclude candidates which surpass total credits
+	 * 3. Exclude candidates which conflicts with any major subject
+	 * 4. Shuffle candidates
+	 * 5. Find any combination whichever is first
+	 */
 	private void enhanceBasket() {
-		// TODO Implement enhance button
-		JOptionPane.showMessageDialog(null, "This feature is not ready.");
+		Set<Course> basketItems = basket.getCourses();
+		
+		if (basketItems.isEmpty()) {
+			String title = "과목 추천 오류";
+			String message = "담은 과목이 없습니다! 먼저 시간표를 검색하여 과목을 몇 개 담아주세요.";
+			JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		int credit = basketItems.stream()
+				.map(Course::getCredit)
+				.reduce(0, Integer::sum);
+		Basket newBasket = new Basket();
+		
+		for (Course c : basketItems) {
+			if (!c.isMajor()) continue;
+			
+			newBasket.pick(c);
+			credit -= c.getCredit();
+		}
+		
+		final int totalCredit = credit;
+		Stream<Course> cStream = AppData.get().courseList
+				.stream()
+				.filter(Course::isLiberalArts)
+				.filter(c -> {
+					return (c.getCredit() <= totalCredit)
+							&& (newBasket.getCourseInConflict(c) == null);
+				});
+		List<Course> candidate = new ArrayList<>(cStream.toList());
+		Collections.shuffle(candidate);
+		boolean success = fillBasket(newBasket, candidate, credit, 0);
+		
+		if (success) {
+			for (Course c : newBasket.getCourses()) {
+				if (!basket.contains(c)) {
+					basket.pick(c);
+					ttModel.addItem(c);
+				}
+			}
+			for (Course c : basket.getCourses()) {
+				if (!newBasket.contains(c)) {
+					basket.drop(c);
+					ttModel.removeItem(c);
+				}
+			}
+			String title = "과목 추천 성공";
+			String message = "전공 과목을 제외하고 학점을 고려하여 새로운 과목으로 재구성하였습니다!";
+			JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			String title = "과목 추천 실패";
+			String message = "새로운 시간표 조합을 찾는 데 실패했습니다.";
+			JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+		}
+	}
+	
+	private boolean fillBasket(Basket basket, List<Course> candidate, int credit, int i) {
+		Basket temp = new Basket();
+		int exCredit = credit;
+		
+		for (int idx = i; idx < candidate.size(); ++idx) {
+			Course c = candidate.get(idx);
+			
+			if (exCredit < c.getCredit() || temp.getCourseInConflict(c) != null)
+				continue;
+			
+			exCredit -= c.getCredit();
+			temp.pick(c);
+			System.out.println("Pick " + c.getCode() + " " + c.getSection());
+			
+			if (exCredit == 0) {
+				temp.getCourses().forEach(basket::pick);
+				return true;
+			}
+		}
+		
+		if (exCredit > 0 && i + 1 < candidate.size()) {
+			return fillBasket(basket, candidate, credit, i + 1);
+		} else {
+			return false;
+		}
 	}
 	
 	private void updateComponents(int panelWidth) {

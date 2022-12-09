@@ -26,7 +26,6 @@ import javax.swing.SwingConstants;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Basket;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Browser;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Course;
-import kr.ac.koreatech.parkcymil.CourseScheduler.entity.CourseData;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Day;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.Hour;
 import kr.ac.koreatech.parkcymil.CourseScheduler.entity.HourBlock;
@@ -220,9 +219,9 @@ public class TimetablePanel extends AppPanel {
 	
 	private JLabel createCourseLabel(Course course) {
 		JLabel label = new JLabel();
-		String name = (String) course.getData(CourseData.NAME);
-		int sect = (Integer) course.getData(CourseData.SECTION);
-		String prof = (String) course.getData(CourseData.PROFESSOR);
+		String name = course.getName();
+		int sect = course.getSection();
+		String prof = course.getProfessor();
 		label.setText("<html>" + name + "<br>" + sect + " " + prof + "</html>");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		

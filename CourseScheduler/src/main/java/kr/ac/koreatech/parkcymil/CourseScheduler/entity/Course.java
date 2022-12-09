@@ -9,19 +9,6 @@ public class Course {
 	private static int newId = 0;
 	private Map<CourseData, Object> map;
 	private int id;
-	/*
-	private String code;
-	private String name;
-	private int section;
-	private String program;
-	private String department;
-	private String professor;
-	private int credit;
-	private int design;
-	private int capacity;
-	private String note;
-	private int[] time;
-	*/
 	
 	public Course(Map<CourseData, Object> map) {
 		this.id = newId++;
@@ -49,97 +36,85 @@ public class Course {
 		this.map = new HashMap<>();
 	}
 	
-	public Object getData(CourseData data) {
-		/*
-		switch (data) {
-		case CODE:
-			return code;
-		case NAME:
-			return name;
-		case SECTION:
-			return section;
-		case PROGRAM:
-			return program;
-		case DEPARTMENT:
-			return department;
-		case PROFESSOR:
-			return professor;
-		case CREDIT:
-			return credit;
-		case DESIGN:
-			return design;
-		case CAPACITY:
-			return capacity;
-		case NOTE:
-			return note;
-		case TIME:
-			return time;
-		default:
-			throw new IllegalArgumentException("Undefined type: " + data.toString());
-		}
-		*/
-		
+	/**
+	 * Reserved for internal use
+	 * @param data Type of data required
+	 * @return The actual value
+	 */
+	@Deprecated
+	public Object getData(CourseData data) {		
 		return map.get(data);
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof Course) && (id == ((Course) obj).id);
 	}
 
 	public int getUniqueID() {
 		return id;
 	}
 	
-	public List<HourBlock> getHourBlocks() {
-		Hour[] hours = (Hour[]) getData(CourseData.HOURS);
-		return HourBlock.getBlocks(hours);
-	}
-
-	/*
 	public String getCode() {
-		return code;
+		return (String) map.get(CourseData.CODE);
 	}
 
 	public String getName() {
-		return name;
+		return (String) map.get(CourseData.NAME);
 	}
 
 	public int getSection() {
-		return section;
+		return (int) map.get(CourseData.SECTION);
 	}
 
 	public String getProgram() {
-		return program;
+		return (String) map.get(CourseData.PROGRAM);
 	}
 
 	public String getDepartment() {
-		return department;
+		return (String) map.get(CourseData.DEPARTMENT);
 	}
 
 	public String getProfessor() {
-		return professor;
+		return (String) map.get(CourseData.PROFESSOR);
 	}
 
 	public int getCredit() {
-		return credit;
+		return (int) map.get(CourseData.CREDIT);
 	}
 
 	public int getDesign() {
-		return design;
+		return (int) map.get(CourseData.DESIGN);
 	}
 	
 	public int getCapacity() {
-		return capacity;
+		return (int) map.get(CourseData.CAPACITY);
 	}
 
 	public String getNote() {
-		return note;
+		return (String) map.get(CourseData.NOTE);
 	}
 	
-	public int[] getTime() {
-		return time;
+	public Hour[] getHours() {
+		return (Hour[]) map.get(CourseData.HOURS);
 	}
-	*/
+	
+	public List<HourBlock> getHourBlocks() {
+		return HourBlock.getBlocks(getHours());
+	}
+	
+	public boolean isMajor() {
+		return !isLiberalArts();
+	}
+	
+	public boolean isLiberalArts() {		
+		switch (getDepartment()) {
+		case "교양학부":
+		case "HRD학과":
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof Course) && (id == ((Course) obj).id);
+	}
 	
 }
