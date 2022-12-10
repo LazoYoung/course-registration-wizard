@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,14 +34,12 @@ public class DataParser {
 		this.line = line;
 	}
 	
-	public static List<Course> extractCourse(File file) {
+	public static List<Course> extractCourse(InputStream is) {
 		List<Course> output = new ArrayList<>();
-		FileReader fileReader = null;
 		BufferedReader reader = null;
 		
 		try {
-			fileReader = new FileReader(file);
-			reader = new BufferedReader(fileReader);
+			reader = new BufferedReader(new InputStreamReader(is));
 			String line = reader.readLine();
 			
 			while (line != null) {
@@ -48,15 +48,14 @@ public class DataParser {
 				output.add(course);
 				line = reader.readLine();
 			}
-		} catch (FileNotFoundException e) {
-			throw new DataParseException("File not found: " + file.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new DataParseException("File corrupted: " + file.getName());
+			throw new DataParseException("Data file corrupted.");
 		} finally {
 			try {
-				if (fileReader != null) fileReader.close();
-				if (reader != null) reader.close();
+				if (reader != null) {
+					reader.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

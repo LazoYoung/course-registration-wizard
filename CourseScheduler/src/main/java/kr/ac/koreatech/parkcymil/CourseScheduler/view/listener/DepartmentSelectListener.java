@@ -22,8 +22,8 @@ public class DepartmentSelectListener implements ActionListener {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
-		JComboBox<String> source = (JComboBox<String>) e.getSource();
-		String department = (String) source.getSelectedItem();
+		var source = (JComboBox<String>) e.getSource();
+		var department = (String) source.getSelectedItem();
 		RowFilter<TimeTableModel, Integer> filter = null;
 		
 		if (Department.getByText(department) != null) {

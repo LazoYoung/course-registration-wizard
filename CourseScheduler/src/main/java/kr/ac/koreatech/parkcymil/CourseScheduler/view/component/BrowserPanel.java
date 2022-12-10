@@ -191,8 +191,8 @@ public class BrowserPanel extends AppPanel {
 							.append(obstacle.getSection())
 							.append(" 분반")
 							.toString();
-					String title = "Time conflicts";
-					String message = "That course overlaps with " + obsName;
+					String title = "시간표 충돌";
+					String message = obsName + "과 시간표가 겹칩니다!";
 					JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
 				} else {
 					basket.pick(c);

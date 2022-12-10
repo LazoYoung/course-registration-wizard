@@ -1,6 +1,5 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,33 +14,6 @@ public class Course {
 		this.map = map;
 	}
 	
-	@Deprecated(forRemoval = true)
-	public Course(String code, String name, int section,
-			String professor, String program, int credit,
-			String note, int capacity, int design, String department, int[] time) {
-		/*
-		this.code = code;
-		this.name = name;
-		this.section = section;
-		this.program = program;
-		this.department = department;
-		this.professor = professor;
-		this.credit = credit;
-		this.design = design;
-		this.capacity = capacity;
-		this.note = note;
-		this.time = time;
-		*/
-		this.id = newId++;
-		this.map = new HashMap<>();
-	}
-	
-	/**
-	 * Reserved for internal use
-	 * @param data Type of data required
-	 * @return The actual value
-	 */
-	@Deprecated
 	public Object getData(CourseData data) {		
 		return map.get(data);
 	}

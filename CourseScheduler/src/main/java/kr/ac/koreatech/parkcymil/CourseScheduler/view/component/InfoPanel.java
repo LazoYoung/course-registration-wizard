@@ -8,7 +8,6 @@ import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class InfoPanel extends AppPanel {
@@ -19,15 +18,15 @@ public class InfoPanel extends AppPanel {
 
 	protected InfoPanel() {
 		// Icon by Ayub Irawan
-		ImageIcon icon = getIcon("icon.png", 50);
-		Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 24);
-		Font updFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
-		Font creditFont = new Font(Font.SERIF, Font.BOLD, 14);
-		JLabel imgLabel = new JLabel(icon);
-		JLabel titleText = new JLabel("시간표 앱");
-		JLabel authorText = new JLabel("개발자: 박찬영");
-		JLabel snoText = new JLabel("학번: 2019136063");
-		JLabel emailText = new JLabel("parkcymil@koreatech.ac.kr");
+		var icon = getIcon("icon.png", 50);
+		var titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 24);
+		var updFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
+		var creditFont = new Font(Font.SERIF, Font.BOLD, 14);
+		var imgLabel = new JLabel(icon);
+		var titleText = new JLabel("시간표 앱");
+		var authorText = new JLabel("개발자: 박찬영");
+		var snoText = new JLabel("학번: 2019136063");
+		var emailText = new JLabel("parkcymil@koreatech.ac.kr");
 		updateText = new JLabel();
 		
 		setLayout(null);
@@ -60,8 +59,8 @@ public class InfoPanel extends AppPanel {
 	}
 	
 	private void updateTime() {
-		SimpleDateFormat sdf = new SimpleDateFormat("y-MM-dd / HH:mm");
-		String format = sdf.format(new Date());
+		var sdf = new SimpleDateFormat("y-MM-dd / HH:mm");
+		var format = sdf.format(new Date());
 		updateText.setText("데이터 갱신: ".concat(format));
 	}
 	
