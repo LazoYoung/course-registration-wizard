@@ -13,28 +13,40 @@ import java.util.function.Consumer;
 public class Basket {
 
 	private Map<HourBlock, Course> map;
+	private List<Course> hollowCourses;
 	private List<Consumer<Course>> pickListeners;
 	private List<Consumer<Course>> dropListeners;
 	
 	public Basket() {
 		map = new HashMap<>();
+		hollowCourses = new ArrayList<>();
 		pickListeners = new ArrayList<>();
 		dropListeners = new ArrayList<>();
 	}
 	
 	public void pick(Course course) {
-		for (HourBlock block : course.getHourBlocks()) {
-			map.put(block, course);
+		var blocks = course.getHourBlocks();
+		
+		if (blocks.isEmpty()) {
+			hollowCourses.add(course);
+		} else {
+			for (HourBlock block : course.getHourBlocks()) {
+				map.put(block, course);
+			}
 		}
 		pickListeners.forEach(c -> c.accept(course));
 	}
 	
 	public void drop(Course course) {
-		Iterator<HourBlock> iter = map.keySet().iterator();
-		
-		while (iter.hasNext()) {
-			if (map.get(iter.next()) == course) {
-				iter.remove();
+		if (course.getHours().length == 0) {
+			hollowCourses.remove(course);
+		} else {
+			Iterator<HourBlock> iter = map.keySet().iterator();
+			
+			while (iter.hasNext()) {
+				if (map.get(iter.next()) == course) {
+					iter.remove();
+				}
 			}
 		}
 		dropListeners.forEach(c -> c.accept(course));
@@ -71,14 +83,14 @@ public class Basket {
 	}
 	
 	public Set<Course> getCourses() {
-		var arr = map.values().toArray(new Course[0]);
 		var set = new HashSet<Course>();
-		Collections.addAll(set, arr);
+		set.addAll(hollowCourses);
+		set.addAll(map.values());
 		return set;
 	}
 	
 	public boolean contains(Course c) {
-		return map.containsValue(c);
+		return (map.containsValue(c) || hollowCourses.contains(c));
 	}
 	
 	/**

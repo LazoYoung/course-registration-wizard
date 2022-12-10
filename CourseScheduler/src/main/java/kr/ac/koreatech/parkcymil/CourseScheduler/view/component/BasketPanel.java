@@ -125,18 +125,19 @@ public class BasketPanel extends AppPanel {
 		boolean success = fillBasket(newBasket, candidate, credit, 0);
 		
 		if (success) {
-			for (Course c : newBasket.getCourses()) {
-				if (!basket.contains(c)) {
-					basket.pick(c);
-					ttModel.addItem(c);
-				}
-			}
 			for (Course c : basket.getCourses()) {
 				if (!newBasket.contains(c)) {
 					basket.drop(c);
 					ttModel.removeItem(c);
 				}
 			}
+			for (Course c : newBasket.getCourses()) {
+				if (!basket.contains(c)) {
+					basket.pick(c);
+					ttModel.addItem(c);
+				}
+			}
+			System.out.println();
 			String title = "과목 추천 성공";
 			String message = "전공 과목을 제외하고 학점을 고려하여 새로운 과목으로 재구성하였습니다!";
 			JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
@@ -159,7 +160,6 @@ public class BasketPanel extends AppPanel {
 			
 			exCredit -= c.getCredit();
 			temp.pick(c);
-			System.out.println("Pick " + c.getCode() + " " + c.getSection());
 			
 			if (exCredit == 0) {
 				temp.getCourses().forEach(basket::pick);
