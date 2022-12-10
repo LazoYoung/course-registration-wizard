@@ -19,13 +19,11 @@ public class Browser {
 	}
 	
 	public void peek(Course course) {
-		String code = (String) course.getData(CourseData.CODE);
-		int sect = (int) course.getData(CourseData.SECTION);
+		String code = course.getCode();
+		int sect = course.getSection();
 		peek = course;
 		otherSections = courseList.stream().filter(c -> {
-			String _code = (String) c.getData(CourseData.CODE);
-			int _sect = (int) c.getData(CourseData.SECTION);
-			return code.equals(_code) && sect != _sect;
+			return code.equals(c.getCode()) && sect != c.getSection();
 		}).toList();
 		peekListeners.forEach(Runnable::run);
 	}

@@ -1,7 +1,9 @@
 package kr.ac.koreatech.parkcymil.CourseScheduler.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,28 +13,40 @@ import java.util.function.Consumer;
 public class Basket {
 
 	private Map<HourBlock, Course> map;
+	private List<Course> hollowCourses;
 	private List<Consumer<Course>> pickListeners;
 	private List<Consumer<Course>> dropListeners;
 	
 	public Basket() {
 		map = new HashMap<>();
+		hollowCourses = new ArrayList<>();
 		pickListeners = new ArrayList<>();
 		dropListeners = new ArrayList<>();
 	}
 	
 	public void pick(Course course) {
-		for (HourBlock block : course.getHourBlocks()) {
-			map.put(block, course);
+		var blocks = course.getHourBlocks();
+		
+		if (blocks.isEmpty()) {
+			hollowCourses.add(course);
+		} else {
+			for (HourBlock block : course.getHourBlocks()) {
+				map.put(block, course);
+			}
 		}
 		pickListeners.forEach(c -> c.accept(course));
 	}
 	
 	public void drop(Course course) {
-		Iterator<HourBlock> iter = map.keySet().iterator();
-		
-		while (iter.hasNext()) {
-			if (map.get(iter.next()) == course) {
-				iter.remove();
+		if (course.getHours().length == 0) {
+			hollowCourses.remove(course);
+		} else {
+			Iterator<HourBlock> iter = map.keySet().iterator();
+			
+			while (iter.hasNext()) {
+				if (map.get(iter.next()) == course) {
+					iter.remove();
+				}
 			}
 		}
 		dropListeners.forEach(c -> c.accept(course));
@@ -57,12 +71,26 @@ public class Basket {
 		return null;
 	}
 	
-	public Set<HourBlock> getHourBlocks() {
-		return map.keySet();
+	public List<HourBlock> getHourBlocks() {
+		var arr = map.keySet().toArray(new HourBlock[0]);
+		List<HourBlock> ret = new ArrayList<>();
+		Collections.addAll(ret, arr);
+		return ret;
 	}
 	
 	public Course getCourse(HourBlock block) {
 		return map.get(block);
+	}
+	
+	public Set<Course> getCourses() {
+		var set = new HashSet<Course>();
+		set.addAll(hollowCourses);
+		set.addAll(map.values());
+		return set;
+	}
+	
+	public boolean contains(Course c) {
+		return (map.containsValue(c) || hollowCourses.contains(c));
 	}
 	
 	/**
