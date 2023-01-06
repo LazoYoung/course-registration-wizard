@@ -1,7 +1,7 @@
 # Intro
-University timetable wizard.
+University timetable wizard written in Java.
 
-Java 10+ is required to run this application.
+Compatible with all desktop platforms where Java 10+ is installed.
 
 **Disclaimer**: This does NOT accurately represent the latest data. Not suitable for real use.
 
